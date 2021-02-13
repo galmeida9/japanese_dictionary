@@ -15,7 +15,6 @@ class App extends React.Component {
   
   saveItemToSearch(item) {
     this.setState({searchValue: item})
-    // console.log(item)
   }
 
   render() {
