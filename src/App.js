@@ -1,14 +1,14 @@
 import React from 'react';
 import SearchAppBar from './components/SearchAppBar';
-import InteractiveList from './components/InteractiveList'
 import Toolbar from '@material-ui/core/Toolbar';
+import JapaneseScreen from './components/japaneseDict/JapaneseScreen';
 
 class App extends React.Component {
   state = {
     searchValue: null
   }
 
-  constructor(props: any) {
+  constructor(props) {
     super(props)
     this.saveItemToSearch = this.saveItemToSearch.bind(this)
   }
@@ -22,7 +22,7 @@ class App extends React.Component {
       <div className="App">
         <SearchAppBar SearchData={this.saveItemToSearch}/>
         <Toolbar />
-        <InteractiveList itemToSearch={this.state.searchValue} />
+        <JapaneseScreen itemToSearch={this.state.searchValue}/>
       </div>
     );
   }
