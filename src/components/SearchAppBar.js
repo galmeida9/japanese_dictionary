@@ -77,16 +77,15 @@ export default function SearchAppBar(props) {
   const classes = useStyles();
   const JishoApi = require('unofficial-jisho-api');
   const jisho = new JishoApi();
-  const [state, setState] = React.useState({
-    left: false,
-  });
-
-
+  const [state, setState] = React.useState({left: false,});
 
   const performSearch = (event) => {
-    jisho.searchForPhrase(event.target.value).then((data) => {
+    if (event.keyCode == 13) {
+      jisho.searchForPhrase(event.target.value).then((data) => {
         props.SearchData(JSON.stringify(data, null, 2))
+        console.log(JSON.stringify(data, null, 2))
       });
+    }
   }
   const toggleDrawer = (anchor, open) => (event) => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -138,10 +137,8 @@ export default function SearchAppBar(props) {
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
-                    // onClick={handleDrawerOpen}
                     onClick={toggleDrawer('left', true)}
                     edge="start"
-                    // className={clsx(classes.menuButton, open && classes.hide)}
                 >
                     <MenuIcon />
                 </IconButton>
@@ -159,7 +156,7 @@ export default function SearchAppBar(props) {
                         input: classes.inputInput,
                     }}
                     inputProps={{ 'aria-label': 'search' }}
-                    onChange={performSearch}
+                    onKeyDown={performSearch}
                     />
                 </div>
             </Toolbar>

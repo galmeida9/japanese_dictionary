@@ -9,6 +9,8 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,8 +35,20 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '16pt'
     },
     gif: {
-        display: 'none'
-    }
+        width: '88pt',
+        paddingLeft: '16pt'
+    },
+    bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+      },
+      title: {
+        fontSize: 14,
+      },
+      pos: {
+        marginBottom: 12,
+      },
   }));
 
 export default function KanjiDefinitionScreen(props) {
@@ -59,9 +73,6 @@ export default function KanjiDefinitionScreen(props) {
         
         setItem(item)
         setExamples(examples.results)
-        
-        console.log(item)
-        console.log(examples.results)
     }
 
     const toggleExamples = () => {
@@ -76,10 +87,10 @@ export default function KanjiDefinitionScreen(props) {
         <div className={classes.root}>
             <div style={{float: 'right'}}>
                 <Button variant="contained" color="primary" style={{marginRight: '10pt'}} onClick={toggleExamples}>
-                    Show Examples
+                    {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>
                 <Button variant="contained" color="secondary" style={{marginRight: '10pt'}} onClick={toggleStrokes}>
-                    Show Strokes
+                    {showStrokes ? "Hide Stroke Order" : "Show Stroke Order"}
                 </Button>
                 <Fab color="primary" aria-label="add">
                     <Link to="/" style={{ textDecoration: 'none', color: 'inherit', marginTop: '5pt' }}>
@@ -95,6 +106,7 @@ export default function KanjiDefinitionScreen(props) {
                             <p className={classes.translation}>{item.meaning}</p>
                             <p className={classes.hiragana}>{item.kunyomi}</p>
                         </td>
+                        <td>{ showStrokes ? (<img id="gif" src={item.strokeOrderGifUri} className={classes.gif} />) : (<span />) }</td>
                     </tr>
                     <tr>
                         <td className={classes.strokes}>{item.strokeCount} strokes</td>
@@ -102,10 +114,37 @@ export default function KanjiDefinitionScreen(props) {
                     </tr>
                 </tbody>
             </table>
-            { showStrokes ? (<img id="gif" src={item.strokeOrderGifUri}/>) : (<p>hide strokes</p>) }
+            <table>
+                <tbody>
+                    <tr>
+                        { JSON.stringify(item) != "{}" ? (
+                            item.kunyomiExamples.map((value) => {
+                                return (
+                                    <td style={{width: 100 / item.kunyomiExamples.length + "%"}} key={value.example}>
+                                        <Card className={classes.root} style={{height: '140pt'}}>
+                                            <CardContent>
+                                                <Typography variant="h5" component="h2">
+                                                    {value.example}
+                                                </Typography>
+                                                <Typography className={classes.pos} color="textSecondary">
+                                                    {value.reading}
+                                                </Typography>
+                                                <Typography variant="body2" component="p">
+                                                    {value.meaning}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </td>
+                                )
+                            }) 
+                        ) : (<td><span /></td>)}
+                    </tr>
+                </tbody>
+            </table>
+            { examples.length > 0 && showEx? (<h1>Examples</h1>) : (<span />) }
             { examples.length > 0 && showEx? (
                 examples.map((value) => {
-                    return(
+                    return (
                         <Accordion key={value.english}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -115,14 +154,12 @@ export default function KanjiDefinitionScreen(props) {
                                 <Typography>{value.english}</Typography>
                             </AccordionSummary>
                             <AccordionDetails style={{display: 'grid'}}>
-                                <Typography>Kanji: {value.kanji}</Typography>
-                                <Typography>Kana: {value.kana}</Typography>
+                                <Typography><b>Kanji:</b> {value.kanji}</Typography>
+                                <Typography><b>Kana:</b> {value.kana}</Typography>
                             </AccordionDetails>
                         </Accordion>
                     )
-                })) : (
-                <p>I have nothing</p>
-            )}
+                })) : (<span />)}
         </div>
     )
 }
