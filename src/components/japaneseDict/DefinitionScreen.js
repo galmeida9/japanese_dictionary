@@ -113,7 +113,6 @@ export default function DefinitionScreen(props) {
                     <tr>
                         { JSON.stringify(item) != "{}" ? (
                             item.senses.map((value) => {
-                                console.log(item)
                                 return (
                                     <td style={{width: 100 / item.senses.length + "%"}} key={value.example}>
                                         <Card className={classes.root} style={{height: '140pt'}}>

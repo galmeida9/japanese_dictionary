@@ -20,9 +20,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <SearchAppBar SearchData={this.saveItemToSearch}/>
-        <Toolbar />
-        <JapaneseScreen itemToSearch={this.state.searchValue}/>
+          <SearchAppBar SearchData={this.saveItemToSearch}/>
+          <Toolbar />
+          <JapaneseScreen itemToSearch={this.state.searchValue}/>
       </div>
     );
   }

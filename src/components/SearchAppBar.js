@@ -17,6 +17,7 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import SettingsIcon from '@material-ui/icons/Settings';
 import LanguageIcon from '@material-ui/icons/Language';
 import StorageIcon from '@material-ui/icons/Storage';
+import { Link, useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,12 +79,13 @@ export default function SearchAppBar(props) {
   const JishoApi = require('unofficial-jisho-api');
   const jisho = new JishoApi();
   const [state, setState] = React.useState({left: false,});
+  const history = useHistory();
 
   const performSearch = (event) => {
     if (event.keyCode == 13) {
       jisho.searchForPhrase(event.target.value).then((data) => {
-        props.SearchData(JSON.stringify(data, null, 2))
-        console.log(JSON.stringify(data, null, 2))
+        props.SearchData(JSON.stringify(data, null, 2));
+        history.push("/");
       });
     }
   }
@@ -105,18 +107,22 @@ export default function SearchAppBar(props) {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        <ListItem button key={"Japanese Dictionary"}>
-        <ListItemIcon>
-            <LanguageIcon />
-        </ListItemIcon>
-        <ListItemText primary={"Japanese Dictionary"} />
-        </ListItem>
-        <ListItem button key={"Word Bank"}>
-        <ListItemIcon>
-            <StorageIcon />
-        </ListItemIcon>
-        <ListItemText primary={"Word Bank"} />
-        </ListItem>
+        <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
+          <ListItem button key={"Japanese Dictionary"}>
+            <ListItemIcon>
+                <LanguageIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Japanese Dictionary"} />
+          </ListItem>
+        </Link>
+        <Link to="/wordBank" style={{ textDecoration: 'none', color: 'black' }}>
+          <ListItem button key={"Word Bank"}>
+            <ListItemIcon>
+                <StorageIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Word Bank"} />
+          </ListItem>
+        </Link>
       </List>
       <Divider />
       <List>
@@ -132,7 +138,7 @@ export default function SearchAppBar(props) {
 
   return (
     <div className={classes.root}>
-        <AppBar position="fixed">
+        <AppBar position="fixed" color="primary">
             <Toolbar>
                 <IconButton
                     color="inherit"

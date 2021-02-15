@@ -10,7 +10,8 @@ function createWindow() {
         height:600,
         show: false,
         webPreferences: {
-            webSecurity: false
+            webSecurity: false,
+            nodeIntegration: true
         }
     });
     const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;

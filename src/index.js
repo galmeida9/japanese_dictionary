@@ -3,9 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter} from 'react-router-dom';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
+const palletType = 'dark'
+const darkTheme = createMuiTheme({
+    palette: {
+        type: palletType,
+    }
+})
 
 ReactDOM.render(
-    <App />,
+  <BrowserRouter>
+    {/* <ThemeProvider theme={darkTheme}> */}
+      <App />
+    {/* </ThemeProvider> */}
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
