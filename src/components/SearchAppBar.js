@@ -17,7 +17,8 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import SettingsIcon from '@material-ui/icons/Settings';
 import LanguageIcon from '@material-ui/icons/Language';
 import StorageIcon from '@material-ui/icons/Storage';
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom';
+import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +85,9 @@ export default function SearchAppBar(props) {
   const performSearch = (event) => {
     if (event.keyCode == 13) {
       jisho.searchForPhrase(event.target.value).then((data) => {
+        if (event.target.value == "") {
+          data.meta.status = 400;
+        }
         props.SearchData(JSON.stringify(data, null, 2));
         history.push("/");
       });
@@ -108,13 +112,15 @@ export default function SearchAppBar(props) {
     >
       <List>
         <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem button key={"Japanese Dictionary"}>
+
+          <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}}>
             <ListItemIcon>
                 <LanguageIcon />
             </ListItemIcon>
             <ListItemText primary={"Japanese Dictionary"} />
           </ListItem>
         </Link>
+
         <Link to="/wordBank" style={{ textDecoration: 'none', color: 'black' }}>
           <ListItem button key={"Word Bank"}>
             <ListItemIcon>
@@ -123,15 +129,27 @@ export default function SearchAppBar(props) {
             <ListItemText primary={"Word Bank"} />
           </ListItem>
         </Link>
+
+        <Link to="/practice" style={{ textDecoration: 'none', color: 'black' }}>
+          <ListItem button key={"Practice"}>
+            <ListItemIcon>
+                <ImportContactsRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Practice"} />
+          </ListItem>
+        </Link>
+
       </List>
       <Divider />
       <List>
-        <ListItem button key={"Settings"}>
-        <ListItemIcon>
-            <SettingsIcon />
-        </ListItemIcon>
-        <ListItemText primary={"Settings"} />
-        </ListItem>
+        <Link to="/settings" style={{ textDecoration: 'none', color: 'black' }}>
+          <ListItem button key={"Settings"}>
+            <ListItemIcon>
+                <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Settings"} />
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
@@ -156,13 +174,13 @@ export default function SearchAppBar(props) {
                     <SearchIcon />
                     </div>
                     <InputBase
-                    placeholder="Search…"
-                    classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                    }}
-                    inputProps={{ 'aria-label': 'search' }}
-                    onKeyDown={performSearch}
+                      placeholder="Search…"
+                      classes={{
+                          root: classes.inputRoot,
+                          input: classes.inputInput,
+                      }}
+                      inputProps={{ 'aria-label': 'search' }}
+                      onKeyDown={performSearch}
                     />
                 </div>
             </Toolbar>

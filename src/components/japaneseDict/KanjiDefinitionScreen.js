@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -11,6 +10,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import DoneIcon from '@material-ui/icons/Done';
+import Chip from '@material-ui/core/Chip';
+import { useHistory } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,57 +38,96 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '16pt'
     },
     gif: {
-        width: '88pt',
-        paddingLeft: '16pt'
+        width: '78pt',
     },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-      },
-      title: {
-        fontSize: 14,
-      },
-      pos: {
-        marginBottom: 12,
-      },
+    wordBank: {
+        backgroundColor: "#4caf50 !important"
+    },
+    card: {
+        justifyContent: "space-between",
+        textAlign: 'center'
+    }
   }));
 
 export default function KanjiDefinitionScreen(props) {
     const classes = useStyles();
+    const [item, setItem] = useState({});
+    const [examples, setExamples] = useState([]);
+    const [showEx, setShowEx] = useState(false);
+    const [showStrokes, setShowStrokes] = useState(false);
+    const [wordBank, setWordBank] = useState(false);
+    const history = useHistory();
+
     const JishoApi = require('unofficial-jisho-api');
     const jisho = new JishoApi();
-    const [item, setItem] = useState({})
-    const [examples, setExamples] = useState([])
-    const [showEx, setShowEx] = useState(false)
-    const [showStrokes, setShowStrokes] = useState(false)
+    const fs = window.require('fs');
 
     useEffect(() => {
         performSearch();
+        getWords();
     }, [])
     
     const performSearch = async () => {
         let data = await jisho.searchForKanji(props.match.params.name);
         let data2 = await jisho.searchForExamples(props.match.params.name);
 
-        const item = JSON.parse(JSON.stringify(data, null, 2))
-        const examples = JSON.parse(JSON.stringify(data2, null, 2))
+        const item = JSON.parse(JSON.stringify(data, null, 2));
+        const examples = JSON.parse(JSON.stringify(data2, null, 2));
         
-        setItem(item)
-        setExamples(examples.results)
+        setItem(item);
+        setExamples(examples.results);
     }
 
     const toggleExamples = () => {
-        setShowEx(!showEx)
+        setShowEx(!showEx);
     }
 
     const toggleStrokes = () => {
-        setShowStrokes(!showStrokes)
+        setShowStrokes(!showStrokes);
+        let kanji = document.getElementById("kanji");
+        kanji.style.display = kanji.style.display == "none" ? "block" : "none";
+    }
+
+    const getWords = async () => {
+        fs.readFile('word-bank.json', function (err, data) {
+            let json = JSON.parse(data).japanese;
+            if (json.filter(el => props.match.params.name == el.kanji).length > 0) {
+                setWordBank(true);
+            }
+        })
+    }
+
+    const makeExampleCard = (example) => {
+        return (
+            <Grid item component={Card} xs className={classes.card} key={example.example}>
+                <CardContent>
+                    <Typography variant="h5" component="h2">
+                        {example.example}
+                    </Typography>
+                    <Typography className={classes.pos} color="textSecondary">
+                        {example.reading}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                        {example.meaning}
+                    </Typography>
+                </CardContent>
+            </Grid>
+        )
     }
 
     return (
         <div className={classes.root}>
             <div style={{float: 'right'}}>
+                {wordBank ? (
+                    <Chip
+                        label="In Word Bank"
+                        color="primary"
+                        classes={{colorPrimary: classes.wordBank}}
+                        onDelete={() => {}}
+                        deleteIcon={<DoneIcon />}
+                        style={{marginRight: '10pt', userSelect: 'none'}}
+                    />
+                ) : (<span/>)}
                 <Button variant="contained" color="primary" style={{marginRight: '10pt'}} onClick={toggleExamples}>
                     {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>
@@ -93,20 +135,18 @@ export default function KanjiDefinitionScreen(props) {
                     {showStrokes ? "Hide Stroke Order" : "Show Stroke Order"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', marginTop: '5pt' }}>
-                        <ArrowBackIcon />
-                    </Link>
+                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
                 </Fab>
             </div>
             <table style={{marginTop: '-10pt'}}>
                 <tbody>
                     <tr>
                         <td id="kanji" className={classes.kanji}>{props.match.params.name}</td>
+                        { showStrokes ? (<td><img id="gif" src={item.strokeOrderGifUri} className={classes.gif} /></td>) : (<td style={{display: 'none'}}><span/></td>) }
                         <td style={{paddingLeft: '22pt'}}>
                             <p className={classes.translation}>{item.meaning}</p>
                             <p className={classes.hiragana}>{item.kunyomi}</p>
                         </td>
-                        <td>{ showStrokes ? (<img id="gif" src={item.strokeOrderGifUri} className={classes.gif} />) : (<span />) }</td>
                     </tr>
                     <tr>
                         <td className={classes.strokes}>{item.strokeCount} strokes</td>
@@ -114,33 +154,24 @@ export default function KanjiDefinitionScreen(props) {
                     </tr>
                 </tbody>
             </table>
-            <table>
-                <tbody>
-                    <tr>
-                        { JSON.stringify(item) != "{}" ? (
-                            item.kunyomiExamples.map((value) => {
-                                return (
-                                    <td style={{width: 100 / item.kunyomiExamples.length + "%"}} key={value.example}>
-                                        <Card className={classes.root} style={{height: '140pt'}}>
-                                            <CardContent>
-                                                <Typography variant="h5" component="h2">
-                                                    {value.example}
-                                                </Typography>
-                                                <Typography className={classes.pos} color="textSecondary">
-                                                    {value.reading}
-                                                </Typography>
-                                                <Typography variant="body2" component="p">
-                                                    {value.meaning}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </td>
-                                )
-                            }) 
-                        ) : (<td><span /></td>)}
-                    </tr>
-                </tbody>
-            </table>
+            <Grid container alignItems="stretch">
+                { JSON.stringify(item) != "{}" ? (
+                    item.kunyomiExamples.map((value, index) => {
+                        if (index < 4) {
+                            return (makeExampleCard(value))
+                        }
+                    }) 
+                ) : (<span />)}
+            </Grid>
+            <Grid container alignItems="stretch">
+                { JSON.stringify(item) != "{}" ? (
+                    item.kunyomiExamples.map((value, index) => {
+                        if (index >= 4) {
+                            return (makeExampleCard(value))
+                        }
+                    }) 
+                ) : (<span />)}
+            </Grid>
             { examples.length > 0 && showEx? (<h1>Examples</h1>) : (<span />) }
             { examples.length > 0 && showEx? (
                 examples.map((value) => {

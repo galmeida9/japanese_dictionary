@@ -11,15 +11,19 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    maxWidth: '100%',
-    height: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-  noResults: {
-      textAlign: 'center'
-  }
+    root: {
+        width: '100%',
+        maxWidth: '100%',
+        height: '100%',
+        backgroundColor: theme.palette.background.paper,
+    },
+    noResults: {
+        textAlign: 'center',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+}
 }));
 
 function Alert(props) {
@@ -115,9 +119,19 @@ export default function CheckboxListSecondary(props) {
             </div>
         );
     }
+    else if (json != null && json.meta.status == 200){
+        return (
+            <div className={classes.noResults}>
+                <h1>No Results Found</h1>
+                <p style={{fontSize:'14pt'}}>You can search in english, hiragana, katakana, kanji and in romanji</p>
+            </div>
+        )
+    }
     else {
         return (
-            <h1 className={classes.noResults}>Search something in the search bar :)</h1>
+            <div>
+                <h1 className={classes.noResults} style={{width: '100%'}}>Search something in the search bar :)</h1>
+            </div>
         )
     }
 }

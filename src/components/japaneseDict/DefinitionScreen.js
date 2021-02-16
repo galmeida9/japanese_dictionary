@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -11,6 +10,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import DoneIcon from '@material-ui/icons/Done';
+import Chip from '@material-ui/core/Chip';
+import { useHistory } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,58 +41,78 @@ const useStyles = makeStyles((theme) => ({
         width: '88pt',
         paddingLeft: '16pt'
     },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-      },
-      title: {
-        fontSize: 14,
-      },
-      pos: {
-        marginBottom: 12,
-      },
+    wordBank: {
+        backgroundColor: "#4caf50 !important"
+    },
+    card: {
+        justifyContent: "space-between",
+        textAlign: 'center'
+    }
   }));
 
 export default function DefinitionScreen(props) {
     const classes = useStyles();
+    const [item, setItem] = useState({});
+    const [examples, setExamples] = useState([]);
+    const [showEx, setShowEx] = useState(false);
+    const [jlpt, setJlpt] = useState("");
+    const [wordBank, setWordBank] = useState(false);
+    const history = useHistory();
+
     const JishoApi = require('unofficial-jisho-api');
     const jisho = new JishoApi();
-    const [item, setItem] = useState({})
-    const [examples, setExamples] = useState([])
-    const [showEx, setShowEx] = useState(false)
-    const [jlpt, setJlpt] = useState("")
+    const fs = window.require('fs');
 
     useEffect(() => {
         performSearch();
+        getWords();
     }, [])
     
     const performSearch = async () => {
         let data = await jisho.searchForPhrase(props.match.params.name);
         let data2 = await jisho.searchForExamples(props.match.params.name);
 
-        const item = JSON.parse(JSON.stringify(data, null, 2))
-        const examples = JSON.parse(JSON.stringify(data2, null, 2))
-        
-        setItem(item.data[0])
-        setExamples(examples.results)
-        setJlpt(item.data[0].jlpt[0].toUpperCase())
+        const item = JSON.parse(JSON.stringify(data, null, 2));
+        const examples = JSON.parse(JSON.stringify(data2, null, 2));
+
+        setItem(item.data[0]);
+        setExamples(examples.results);
+        if (item.data[0].jlpt.length > 0) {
+            setJlpt(item.data[0].jlpt[0].toUpperCase());
+        }
     }
 
     const toggleExamples = () => {
-        setShowEx(!showEx)
+        setShowEx(!showEx);
+    }
+
+    const getWords = async () => {
+        fs.readFile('word-bank.json', function (err, data) {
+            let json = JSON.parse(data).japanese;
+            if (json.filter(el => props.match.params.name == el.kanji).length > 0) {
+                setWordBank(true);
+            }
+        })
     }
 
     return (
         <div className={classes.root}>
             <div style={{float: 'right'}}>
+                {wordBank ? (
+                    <Chip
+                        label="In Word Bank"
+                        color="primary"
+                        classes={{colorPrimary: classes.wordBank}}
+                        onDelete={() => {}}
+                        deleteIcon={<DoneIcon />}
+                        style={{marginRight: '10pt', userSelect: 'none'}}
+                    />
+                ) : (<span/>)}
                 <Button variant="contained" color="primary" style={{marginRight: '10pt'}} onClick={toggleExamples}>
                     {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', marginTop: '5pt' }}>
-                        <ArrowBackIcon />
-                    </Link>
+                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
                 </Fab>
             </div>
             { JSON.stringify(item) != "{}" ? (
@@ -108,33 +131,27 @@ export default function DefinitionScreen(props) {
                     </tbody>
                 </table>
             ) : (<span/>) }
-            <table>
-                <tbody>
-                    <tr>
-                        { JSON.stringify(item) != "{}" ? (
-                            item.senses.map((value) => {
-                                return (
-                                    <td style={{width: 100 / item.senses.length + "%"}} key={value.example}>
-                                        <Card className={classes.root} style={{height: '140pt'}}>
-                                            <CardContent>
-                                                <Typography className={classes.pos} color="textSecondary">
-                                                    {value.parts_of_speech}
-                                                </Typography>
-                                                <Typography variant="h5" component="h2">
-                                                    {value.english_definitions.join(", ")}
-                                                </Typography>
-                                                <Typography variant="body2" component="p">
-                                                    {value.meaning}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </td>
-                                )
-                            }) 
-                        ) : (<td><span /></td>)}
-                    </tr>
-                </tbody>
-            </table>
+            <Grid container alignItems="stretch">
+                { JSON.stringify(item) != "{}" ? (
+                    item.senses.map((value) => {
+                        return (
+                             <Grid item component={Card} xs className={classes.card} key={value.english_definitions}>
+                                <CardContent>
+                                    <Typography className={classes.pos} color="textSecondary">
+                                        {value.parts_of_speech}
+                                    </Typography>
+                                    <Typography variant="h5" component="h2">
+                                        {value.english_definitions.join(", ")}
+                                    </Typography>
+                                    <Typography variant="body2" component="p">
+                                        {value.meaning}
+                                    </Typography>
+                                </CardContent>
+                            </Grid>
+                        )
+                    })
+                ) : (<span />)}
+            </Grid>
             { examples.length > 0 && showEx? (<h1>Examples</h1>) : (<span />) }
             { examples.length > 0 && showEx? (
                 examples.map((value) => {

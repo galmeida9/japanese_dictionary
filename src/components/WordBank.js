@@ -17,9 +17,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { useHistory } from 'react-router-dom';
+import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -54,8 +55,9 @@ function stableSort(array, comparator) {
 
 const headCells = [
     { id: 'kanji', numeric: false, disablePadding: true, label: 'Word' },
+    { id: 'def', numeric: false, disablePadding: false, label: 'Definition' },
     { id: 'hira', numeric: false, disablePadding: false, label: 'Hiragana' },
-    { id: 'english', numeric: false, disablePadding: false, label: 'english' },
+    { id: 'english', numeric: false, disablePadding: false, label: 'English' },
 ];
 
 function EnhancedTableHead(props) {
@@ -167,6 +169,7 @@ export default function WordBank() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [open, setOpen] = React.useState(false);
+    const history = useHistory();
 
     const fs = window.require('fs');
     const classes = useStyles();
@@ -234,16 +237,25 @@ export default function WordBank() {
 
     const getWords = async () => {
         fs.readFile('word-bank.json', function (err, data) {
-            setWords(JSON.parse(data).japanese);
+            setWords(JSON.parse(data).japanese.reverse());
         })
     }
 
     const deleteWords = () => {
         let wordsCopy = words;
-        selected.forEach(word => console.log(words.splice(wordsCopy.map(e => e.kanji).indexOf(word), 1)));
+        selected.forEach(word => words.splice(wordsCopy.map(e => e.kanji).indexOf(word), 1));
         fs.writeFileSync('word-bank.json', JSON.stringify({"japanese": words}));
         setOpen(true);
         setSelected([]);
+    }
+
+    const openDefinition = (name) => {
+        if (name.length > 1) {
+            history.push("/Definition/" + name);
+        }
+        else {
+            history.push("/kanjiDefinition/" + name);
+        }
     }
 
     const EnhancedTableToolbar = (props) => {
@@ -272,13 +284,7 @@ export default function WordBank() {
                         <DeleteIcon/>
                     </IconButton>
                 </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            ) : (<span/>)}
           </Toolbar>
         );
     };
@@ -322,7 +328,6 @@ export default function WordBank() {
                             return (
                                 <TableRow
                                     hover
-                                    onClick={(event) => handleClick(event, row.kanji)}
                                     role="checkbox"
                                     aria-checked={isItemSelected}
                                     tabIndex={-1}
@@ -332,16 +337,24 @@ export default function WordBank() {
                                 >
                                     <TableCell padding="checkbox">
                                         <Checkbox
+                                            onClick={(event) => handleClick(event, row.kanji)}
                                             checked={isItemSelected}
                                             inputProps={{ 'aria-labelledby': labelId }}
                                             color="primary"
                                         />
                                     </TableCell>
-                                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                                    <TableCell component="th" id={labelId} scope="row" padding="none" style={{fontSize: '14pt'}}>
                                         {row.kanji}
                                     </TableCell>
-                                    <TableCell align="left">{row.hira}</TableCell>
-                                    <TableCell align="left">{row.english}</TableCell>
+                                    <TableCell align="left">
+                                        <IconButton onClick={() => openDefinition(row.kanji)} >
+                                            <ImportContactsRoundedIcon 
+                                                style={{cursor: 'pointer'}}
+                                            />
+                                        </IconButton>
+                                    </TableCell>
+                                    <TableCell align="left" style={{fontSize: '14pt'}}>{row.hira}</TableCell>
+                                    <TableCell align="left" style={{fontSize: '12pt'}}>{row.english}</TableCell>
                                 </TableRow>
                             );
                             })}
