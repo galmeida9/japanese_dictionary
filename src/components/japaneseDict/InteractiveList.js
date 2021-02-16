@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import WordBankContext from '../WordBankContext';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,34 +45,25 @@ export default function CheckboxListSecondary(props) {
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
     const [error, setError] = React.useState(false);
-    const fs = window.require('fs');
+
+    const context = useContext(WordBankContext);
 
     let json = JSON.parse(props.itemToSearch);
 
     const addToWordBank = (wordData) => {
-        fs.readFile('word-bank.json', function (err, data) {
-            let word = {
-                "kanji": wordData["slug"],
-                "hira": wordData["japanese"][0]["reading"],
-                "english": wordData["senses"][0]["english_definitions"][0]
-            }
+        let word = {
+            "kanji": wordData["slug"],
+            "hira": wordData["japanese"][0]["reading"],
+            "english": wordData["senses"][0]["english_definitions"][0]
+        }
 
-            if (err == null) {
-                let json = JSON.parse(data);
-                if (json.japanese.filter(e => e.kanji === word["kanji"]).length > 0) {
-                    setError(true)
-                }
-                else {
-                    json.japanese.push(word)
-                    fs.writeFileSync('word-bank.json', JSON.stringify(json))
-                    setOpen(true);
-                }
-            }
-            else {
-                fs.writeFileSync('word-bank.json', JSON.stringify({"japanese": [word]}))
-                setOpen(true);
-            }
-        })
+        if (context.state.japanese.filter(e => e.kanji === word["kanji"]).length > 0) {
+            setError(true);
+        }
+        else {
+            context.addValue(word);
+            setOpen(true);
+        }
     }
 
     const handleClose = (event, reason) => {

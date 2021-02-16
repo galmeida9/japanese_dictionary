@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import WordBankContext from './WordBankContext';
 
 const useStyles = makeStyles({
     root: {
@@ -42,6 +43,8 @@ export default function Practice(props) {
     const [correctResp, setCorrectResp] = React.useState("");
     const [response, setResponse] = React.useState("");
 
+    const context = useContext(WordBankContext);
+
     const fs = window.require('fs');
     const classes = useStyles();
 
@@ -62,6 +65,10 @@ export default function Practice(props) {
         fs.readFile('word-bank.json', function (err, data) {
             setWords(JSON.parse(data).japanese.reverse());
             getRandomWord(JSON.parse(data).japanese.reverse());
+            console.log(context.state)
+            // context.addValue({"kanji":"車","hira":"くるま","english":"car"})
+            // console.log(context.state)
+            // context.removeValue({"kanji":"花","hira":"はな","english":"flower"})
         })
     }
 

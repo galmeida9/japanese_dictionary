@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import WordBankContext  from './components/WordBankContext'
 
 const palletType = 'dark'
 const darkTheme = createMuiTheme({
@@ -13,10 +14,37 @@ const darkTheme = createMuiTheme({
     }
 })
 
+const fs = window.require('fs');
+const words = {"japanese": []}
+
+const readFile = () => {
+  fs.readFile('word-bank.json', function (err, data) {
+    words.japanese = JSON.parse(data).japanese;
+  });
+}
+
+readFile();
+
+const addWord = (word) => {
+  words.japanese.unshift(word);
+  fs.writeFileSync('word-bank.json', JSON.stringify(words))
+}
+
+const removeWord = (kanji) => {
+  let wordsCopy = words.japanese;
+  let index = wordsCopy.map(e => e.kanji).indexOf(kanji)
+  if (index != -1) {
+    words.japanese.splice(index, 1);
+    fs.writeFileSync('word-bank.json', JSON.stringify(words))
+  }
+}
+
 ReactDOM.render(
   <BrowserRouter>
     {/* <ThemeProvider theme={darkTheme}> */}
+      <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord}}>
       <App />
+      </WordBankContext.Provider>
     {/* </ThemeProvider> */}
   </BrowserRouter>,
   document.getElementById('root')

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -14,6 +14,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import Chip from '@material-ui/core/Chip';
 import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
+import WordBankContext from '../WordBankContext';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -58,9 +59,10 @@ export default function KanjiDefinitionScreen(props) {
     const [wordBank, setWordBank] = useState(false);
     const history = useHistory();
 
+    const context = useContext(WordBankContext);
+
     const JishoApi = require('unofficial-jisho-api');
     const jisho = new JishoApi();
-    const fs = window.require('fs');
 
     useEffect(() => {
         performSearch();
@@ -89,12 +91,9 @@ export default function KanjiDefinitionScreen(props) {
     }
 
     const getWords = async () => {
-        fs.readFile('word-bank.json', function (err, data) {
-            let json = JSON.parse(data).japanese;
-            if (json.filter(el => props.match.params.name == el.kanji).length > 0) {
-                setWordBank(true);
-            }
-        })
+        if (context.state.japanese.filter(el => props.match.params.name == el.kanji).length > 0) {
+            setWordBank(true);
+        }
     }
 
     const makeExampleCard = (example) => {

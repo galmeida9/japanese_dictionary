@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -21,6 +21,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { useHistory } from 'react-router-dom';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
+import WordBankContext from './WordBankContext';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -162,7 +163,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function WordBank() {
-    const [words, setWords] = useState([]);
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -171,7 +171,7 @@ export default function WordBank() {
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
 
-    const fs = window.require('fs');
+    const context = useContext(WordBankContext);
     const classes = useStyles();
 
     const handleClose = (event, reason) => {
@@ -191,7 +191,7 @@ export default function WordBank() {
     
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = words.map((n) => n.kanji);
+            const newSelecteds = context.state.japanese.map((n) => n.kanji);
             setSelected(newSelecteds);
             return;
         }
@@ -229,22 +229,10 @@ export default function WordBank() {
     
     const isSelected = (name) => selected.indexOf(name) !== -1;
     
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, words.length - page * rowsPerPage);
-
-    useEffect(() => {
-        getWords();
-    }, [])
-
-    const getWords = async () => {
-        fs.readFile('word-bank.json', function (err, data) {
-            setWords(JSON.parse(data).japanese.reverse());
-        })
-    }
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, context.state.japanese.length - page * rowsPerPage);
 
     const deleteWords = () => {
-        let wordsCopy = words;
-        selected.forEach(word => words.splice(wordsCopy.map(e => e.kanji).indexOf(word), 1));
-        fs.writeFileSync('word-bank.json', JSON.stringify({"japanese": words}));
+        selected.forEach(word => context.removeValue(word));
         setOpen(true);
         setSelected([]);
     }
@@ -316,10 +304,10 @@ export default function WordBank() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={words.length}
+                            rowCount={context.state.japanese.length}
                         />
                         <TableBody>
-                        {stableSort(words, getComparator(order, orderBy))
+                        {stableSort(context.state.japanese, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                             const isItemSelected = isSelected(row.kanji);
@@ -369,7 +357,7 @@ export default function WordBank() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={words.length}
+                    count={context.state.japanese.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
