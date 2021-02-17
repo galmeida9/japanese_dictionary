@@ -15,6 +15,9 @@ import Chip from '@material-ui/core/Chip';
 import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import WordBankContext from '../WordBankContext';
+import AddIcon from '@material-ui/icons/Add';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,13 +45,24 @@ const useStyles = makeStyles((theme) => ({
         width: '78pt',
     },
     wordBank: {
-        backgroundColor: "#4caf50 !important"
+        backgroundColor: "#4caf50 !important",
+        marginRight: '10pt', 
+        userSelect: 'none'
+    },
+    addToWordBank: {
+        backgroundColor: "#ff9800 !important",
+        marginRight: '10pt', 
+        userSelect: 'none'
     },
     card: {
         justifyContent: "space-between",
         textAlign: 'center'
     }
-  }));
+}));
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function KanjiDefinitionScreen(props) {
     const classes = useStyles();
@@ -57,6 +71,7 @@ export default function KanjiDefinitionScreen(props) {
     const [showEx, setShowEx] = useState(false);
     const [showStrokes, setShowStrokes] = useState(false);
     const [wordBank, setWordBank] = useState(false);
+    const [open, setOpen] = React.useState(false);
     const history = useHistory();
 
     const context = useContext(WordBankContext);
@@ -114,8 +129,33 @@ export default function KanjiDefinitionScreen(props) {
         )
     }
 
+    const addToWordBank = () => {
+        let word = {
+            "kanji": props.match.params.name,
+            "hira": item.kunyomi,
+            "english": item.meaning
+        }
+
+        context.addValue(word);
+        setOpen(true);
+        setWordBank(true);
+    }
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
     return (
         <div className={classes.root}>
+            <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+                <Alert onClose={handleClose} severity="success">
+                    Added word to Word Bank
+                </Alert>
+            </Snackbar>
             <div style={{float: 'right'}}>
                 {wordBank ? (
                     <Chip
@@ -124,9 +164,16 @@ export default function KanjiDefinitionScreen(props) {
                         classes={{colorPrimary: classes.wordBank}}
                         onDelete={() => {}}
                         deleteIcon={<DoneIcon />}
-                        style={{marginRight: '10pt', userSelect: 'none'}}
                     />
-                ) : (<span/>)}
+                ) : (
+                    <Chip
+                        label="Add to Word Bank"
+                        color="primary"
+                        classes={{colorPrimary: classes.addToWordBank}}
+                        onDelete={() => {addToWordBank()}}
+                        deleteIcon={<AddIcon />}
+                    />
+                )}
                 <Button variant="contained" color="primary" style={{marginRight: '10pt'}} onClick={toggleExamples}>
                     {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>

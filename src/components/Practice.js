@@ -36,7 +36,6 @@ function Alert(props) {
 
 
 export default function Practice(props) {
-    const [words, setWords] = useState([]);
     const [currWord, setCurrWord] = useState({"kanji": "", "hira": "", "english": ""});
     const [open, setOpen] = React.useState(false);
     const [error, setError] = React.useState(false);
@@ -44,9 +43,11 @@ export default function Practice(props) {
     const [response, setResponse] = React.useState("");
 
     const context = useContext(WordBankContext);
-
-    const fs = window.require('fs');
     const classes = useStyles();
+
+    useEffect(() => {
+        getRandomWord();
+    }, [])
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -57,23 +58,8 @@ export default function Practice(props) {
         setError(false);
     };
 
-    useEffect(() => {
-        getWords();
-    }, [])
-
-    const getWords = async () => {
-        fs.readFile('word-bank.json', function (err, data) {
-            setWords(JSON.parse(data).japanese.reverse());
-            getRandomWord(JSON.parse(data).japanese.reverse());
-            console.log(context.state)
-            // context.addValue({"kanji":"車","hira":"くるま","english":"car"})
-            // console.log(context.state)
-            // context.removeValue({"kanji":"花","hira":"はな","english":"flower"})
-        })
-    }
-
-    const getRandomWord = (wordArray) => {
-        setCurrWord(wordArray[Math.floor(Math.random() * wordArray.length)]);
+    const getRandomWord = () => {
+        setCurrWord(context.state.japanese[Math.floor(Math.random() * context.state.japanese.length)]);
     }
 
     const checkInput = (event) => {
@@ -87,7 +73,7 @@ export default function Practice(props) {
                     setCorrectResp(currWord.hira)
                 }
     
-                getRandomWord(words);
+                getRandomWord();
                 setResponse("");
             }
         }
@@ -105,7 +91,7 @@ export default function Practice(props) {
                     Incorrect, correct response: {correctResp}
                 </Alert>
             </Snackbar>
-            {words.length > 0 && currWord.kanji != "" ? (
+            {context.state.japanese.length > 0 && currWord.kanji != "" ? (
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>

@@ -10,6 +10,8 @@ import { useHistory } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import WordBankContext from '../WordBankContext';
+import DoneIcon from '@material-ui/icons/Done';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,7 +26,12 @@ const useStyles = makeStyles((theme) => ({
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, -50%)',
-}
+    },
+    wordBank: {
+        backgroundColor: "#4caf50 !important",
+        marginRight: '0pt',
+        userSelect: 'none'
+    },
 }));
 
 function Alert(props) {
@@ -75,6 +82,14 @@ export default function CheckboxListSecondary(props) {
         setError(false);
     };
 
+    const checkWordBank = (kanji) => {
+        if (context.state.japanese.filter(el => kanji == el.kanji).length > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     if (json != null && json["data"].length > 0) {
         json = json["data"]
         return (
@@ -100,9 +115,19 @@ export default function CheckboxListSecondary(props) {
                                     primaryTypographyProps={{variant: "h6"}}    
                                 />
                                 <ListItemSecondaryAction>
-                                    <IconButton edge="end" aria-label="Add" onClick={() => {addToWordBank(value)}}>
-                                        <AddIcon />
-                                    </IconButton>
+                                    {checkWordBank(value["slug"]) ? (
+                                        <Chip
+                                            label="In Word Bank"
+                                            color="primary"
+                                            classes={{colorPrimary: classes.wordBank}}
+                                            onDelete={() => {}}
+                                            deleteIcon={<DoneIcon />}
+                                        />
+                                        ) : (
+                                            <IconButton edge="end" aria-label="Add" onClick={() => {addToWordBank(value)}}>
+                                                <AddIcon />
+                                            </IconButton>
+                                    )}
                                 </ListItemSecondaryAction>
                             </ListItem>
                         );
