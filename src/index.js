@@ -15,11 +15,17 @@ const darkTheme = createMuiTheme({
 })
 
 const fs = window.require('fs');
-const words = {"japanese": []}
+const words = {"japanese": [], "highscore": 0 }
 
 const readFile = () => {
   fs.readFile('word-bank.json', function (err, data) {
-    words.japanese = JSON.parse(data).japanese;
+    if (err != null) {
+      console.log(err);
+    }
+    else {
+      words.japanese = JSON.parse(data).japanese;
+      words.highscore = JSON.parse(data).highscore;
+    }
   });
 }
 
@@ -27,7 +33,7 @@ readFile();
 
 const addWord = (word) => {
   words.japanese.unshift(word);
-  fs.writeFileSync('word-bank.json', JSON.stringify(words))
+  fs.writeFileSync('word-bank.json', JSON.stringify(words));
 }
 
 const removeWord = (kanji) => {
@@ -35,14 +41,19 @@ const removeWord = (kanji) => {
   let index = wordsCopy.map(e => e.kanji).indexOf(kanji)
   if (index != -1) {
     words.japanese.splice(index, 1);
-    fs.writeFileSync('word-bank.json', JSON.stringify(words))
+    fs.writeFileSync('word-bank.json', JSON.stringify(words));
   }
+}
+
+const setHighScore = (value) => {
+  words.highscore = value;
+  fs.writeFileSync('word-bank.json', JSON.stringify(words));
 }
 
 ReactDOM.render(
   <BrowserRouter>
     {/* <ThemeProvider theme={darkTheme}> */}
-      <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord}}>
+      <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore}}>
       <App />
       </WordBankContext.Provider>
     {/* </ThemeProvider> */}

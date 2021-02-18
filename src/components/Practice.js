@@ -7,6 +7,8 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import WordBankContext from './WordBankContext';
+import Button from '@material-ui/core/Button';
+import CardActions from '@material-ui/core/CardActions';
 
 const useStyles = makeStyles({
     root: {
@@ -27,6 +29,18 @@ const useStyles = makeStyles({
         transform: 'translate(-50%, -50%)',
         padding: '22pt',
         userSelect: 'none'
+    },
+    highScore: {
+        width: '162pt',
+        textAlign: 'center',
+        margin: '10pt'
+    },
+    score: {
+        width: '162pt',
+        textAlign: 'center',
+        margin: '10pt',
+        right: '0',
+        position: 'absolute'
     }
 });
 
@@ -41,12 +55,16 @@ export default function Practice(props) {
     const [error, setError] = React.useState(false);
     const [correctResp, setCorrectResp] = React.useState("");
     const [response, setResponse] = React.useState("");
+    const [highScore, setHightScore] = React.useState(0);
+    const [score, setScore] = React.useState(0);
+    const [wordList, setWordList] = React.useState([]);
+    const [finished, setFinished] = React.useState(false);
 
     const context = useContext(WordBankContext);
     const classes = useStyles();
 
     useEffect(() => {
-        getRandomWord();
+        copyList();
     }, [])
 
     const handleClose = (event, reason) => {
@@ -58,25 +76,79 @@ export default function Practice(props) {
         setError(false);
     };
 
-    const getRandomWord = () => {
-        setCurrWord(context.state.japanese[Math.floor(Math.random() * context.state.japanese.length)]);
+    const copyList = () => {
+        let list = [];
+        for (var i = 0; i < context.state.japanese.length; i++) {
+            list.push(context.state.japanese[i]);
+        }
+
+        setHightScore(context.state.highscore);
+        setWordList(list);
+        getRandomWord(list);
+    }
+
+    const getRandomWord = (list) => {
+        let index = Math.floor(Math.random() * list.length);
+        setCurrWord(list[index]);
+        console.log(list[index])
+        console.log(list)
+        
+        if (list.length > 2) {
+            list.splice(index, 1);
+            setWordList(list);
+        }
+        else if (list.length == 2) {
+            list = [list[list.length - 1 - index]]
+            setWordList(list);
+        }
+        else if (list.length == 1) {
+            list = []
+            setWordList(list);
+        }
+
+        console.log(list)
+
     }
 
     const checkInput = (event) => {
         if (event.keyCode == 13) {
             if (response != "") {
-                if (response == currWord.kanji) {
+                if ((currWord.kanji != currWord.hira && response == currWord.kanji) 
+                || (currWord.kanji == currWord.hira && response == currWord.english.split(" ")[0])) {
+                    let s = score + 1
+                    setScore(s);
                     setOpen(true);
+
+                    if (s > highScore) {
+                        setHightScore(s);
+                        context.setScore(s);
+                    }
                 }
                 else {
                     setError(true);
-                    setCorrectResp(currWord.hira)
+                    if (currWord.kanji == currWord.hira) {
+                        setCorrectResp(currWord.english);
+                    }
+                    else {
+                        setCorrectResp(currWord.hira);
+                    }
                 }
     
-                getRandomWord();
+                if (wordList.length > 0) {
+                    getRandomWord(wordList);
+                }
+                else {
+                    setFinished(true);
+                }
                 setResponse("");
             }
         }
+    }
+
+    const retry = () => {
+        copyList();
+        setScore(0);
+        setFinished(false);
     }
     
     return (
@@ -91,19 +163,41 @@ export default function Practice(props) {
                     Incorrect, correct response: {correctResp}
                 </Alert>
             </Snackbar>
-            {context.state.japanese.length > 0 && currWord.kanji != "" ? (
+            <div style={{display: 'flex'}}>
+                <Card className={classes.highScore}>
+                    <CardContent>
+                        <Typography variant="h5" component="h2">
+                            HighScore: {highScore}
+                        </Typography>
+                    </CardContent>
+                </Card>
+                <Card className={classes.score}>
+                    <CardContent>
+                        <Typography variant="h5" component="h2">
+                            Score: {score}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </div>
+            {currWord != null && currWord.kanji != "" && !finished ? (
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Write the kanji bellow
+                            {currWord.kanji != currWord.hira ? ("Write the kanji bellow") : ("Write the meaning in english bellow")}
                         </Typography>
-                        <Typography variant="h1" component="h2">
-                            {currWord.kanji}
-                        </Typography>
+                        { currWord.kanji != currWord.hira ? (
+                            <Typography variant="h1" component="h2">
+                                {currWord.kanji}
+                            </Typography>
+                        ) : (
+                            <Typography variant="h2" component="h2">
+                                {currWord.kanji}
+                            </Typography>
+                        ) }
                     </CardContent>
                     <TextField 
                         id="outlined-basic" 
-                        label="Write word" 
+                        label="Write answer" 
                         variant="outlined" 
                         onKeyDown={checkInput} 
                         value={response} 
@@ -111,6 +205,24 @@ export default function Practice(props) {
                     />
                 </Card>                
             ) : (<span/>)}
+            { finished ? (
+                <Card className={classes.card}>
+                    <CardContent>
+                        <Typography variant="h3" component="h2">
+                            Practice Complete!
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button 
+                            variant="contained" 
+                            color="primary" 
+                            style={{marginLeft: 'auto', marginRight: 'auto'}} 
+                            onClick={retry}>
+                            Retry
+                        </Button>
+                    </CardActions>
+                </Card>     
+            ) : (<span/>) }
         </div>
     )
 }
