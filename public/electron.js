@@ -22,7 +22,7 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-    // mainWindow.removeMenu()
+    mainWindow.removeMenu()
 }
 app.on('ready', createWindow);
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');

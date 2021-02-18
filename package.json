@@ -1,6 +1,8 @@
 {
-  "name": "word_bank",
-  "version": "0.1.0",
+  "name": "japanese_dictionary",
+  "productName": "Japanese Dictionary",
+  "version": "1.0.0",
+  "description": "A japanese dictionary with word bank and practice game",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -10,8 +12,6 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.0",
     "concurrently": "^5.3.0",
-    "electron": "^11.2.3",
-    "electron-builder": "^22.9.1",
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -22,13 +22,18 @@
     "wait-on": "^5.2.1",
     "web-vitals": "^1.1.0"
   },
+  "devDependencies": {
+    "electron-builder": "^22.9.1",
+    "electron": "^11.2.3"
+  },
   "scripts": {
     "dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "ebuild": "npm run build && node_modules/.bin/build"
+    "ebuild": "npm run build && node_modules/.bin/electron-builder --win",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +54,5 @@
     ]
   },
   "homepage": "./",
-  "main": "./electron/main.js",
-  "proxy": "https://jisho.org"
+  "main": "./public/electron.js"
 }
