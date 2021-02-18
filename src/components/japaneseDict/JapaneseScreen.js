@@ -19,7 +19,9 @@ export class JapaneseScreen extends Component {
                     <Route path="/Definition/:name" component={DefinitionScreen}/>
                     <Route exact path="/wordBank" component={WordBank}/>
                     <Route exact path="/practice" component={Practice}/>
-                    <Route exact path="/settings" component={Settings}/>
+                    <Route exact path="/settings" render={(props) => (
+                        <Settings {...props} theme={this.props.theme} />
+                    )}/>
                 </Switch>
             </div>
         )

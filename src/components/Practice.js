@@ -90,8 +90,6 @@ export default function Practice(props) {
     const getRandomWord = (list) => {
         let index = Math.floor(Math.random() * list.length);
         setCurrWord(list[index]);
-        console.log(list[index])
-        console.log(list)
         
         if (list.length > 2) {
             list.splice(index, 1);
@@ -105,9 +103,6 @@ export default function Practice(props) {
             list = []
             setWordList(list);
         }
-
-        console.log(list)
-
     }
 
     const checkInput = (event) => {

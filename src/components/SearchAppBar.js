@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import clsx from 'clsx';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -17,8 +17,9 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import SettingsIcon from '@material-ui/icons/Settings';
 import LanguageIcon from '@material-ui/icons/Language';
 import StorageIcon from '@material-ui/icons/Storage';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
+import WordBankContext from './WordBankContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,6 +82,7 @@ export default function SearchAppBar(props) {
   const jisho = new JishoApi();
   const [state, setState] = React.useState({left: false,});
   const history = useHistory();
+  const context = useContext(WordBankContext);
 
   const performSearch = (event) => {
     if (event.keyCode == 13) {
@@ -111,52 +113,43 @@ export default function SearchAppBar(props) {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
+        <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}} onClick={() => {history.push("/")}}>
+          <ListItemIcon>
+              <LanguageIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Japanese Dictionary"} />
+        </ListItem>
 
-          <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}}>
-            <ListItemIcon>
-                <LanguageIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Japanese Dictionary"} />
-          </ListItem>
-        </Link>
+        <ListItem button key={"Word Bank"} onClick={() => {history.push("/wordBank")}}>
+          <ListItemIcon>
+              <StorageIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Word Bank"} />
+        </ListItem>
 
-        <Link to="/wordBank" style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem button key={"Word Bank"}>
-            <ListItemIcon>
-                <StorageIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Word Bank"} />
-          </ListItem>
-        </Link>
-
-        <Link to="/practice" style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem button key={"Practice"}>
-            <ListItemIcon>
-                <ImportContactsRoundedIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Practice"} />
-          </ListItem>
-        </Link>
+        <ListItem button key={"Practice"} onClick={() => {history.push("/practice")}}>
+          <ListItemIcon>
+              <ImportContactsRoundedIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Practice"} />
+        </ListItem>
 
       </List>
       <Divider />
       <List>
-        <Link to="/settings" style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem button key={"Settings"}>
-            <ListItemIcon>
-                <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Settings"} />
-          </ListItem>
-        </Link>
+        <ListItem button key={"Settings"} onClick={() => {history.push("/settings")}}>
+          <ListItemIcon>
+              <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Settings"} />
+        </ListItem>
       </List>
     </div>
   );
 
   return (
     <div className={classes.root}>
-        <AppBar position="fixed" color="primary">
+        <AppBar position="fixed" color={context.state.dark ? "default" : "primary"}>
             <Toolbar>
                 <IconButton
                     color="inherit"

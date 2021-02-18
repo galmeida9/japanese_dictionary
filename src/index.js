@@ -4,18 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import WordBankContext  from './components/WordBankContext'
+import WordBankContext  from './components/WordBankContext';
 
-const palletType = 'dark'
-const darkTheme = createMuiTheme({
-    palette: {
-        type: palletType,
-    }
-})
+//------------------------
+// Save Data Managing
+//-----------------------
 
 const fs = window.require('fs');
-const words = {"japanese": [], "highscore": 0 }
+const words = {"japanese": [], "highscore": 0, "dark": false }
 
 const readFile = () => {
   fs.readFile('word-bank.json', function (err, data) {
@@ -25,6 +21,7 @@ const readFile = () => {
     else {
       words.japanese = JSON.parse(data).japanese;
       words.highscore = JSON.parse(data).highscore;
+      words.dark = JSON.parse(data).dark
     }
   });
 }
@@ -50,13 +47,16 @@ const setHighScore = (value) => {
   fs.writeFileSync('word-bank.json', JSON.stringify(words));
 }
 
+const setTheme = (bool) => {
+  words.dark = bool;
+  fs.writeFileSync('word-bank.json', JSON.stringify(words));
+}
+
 ReactDOM.render(
   <BrowserRouter>
-    {/* <ThemeProvider theme={darkTheme}> */}
-      <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore}}>
+    <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore, setTheme: setTheme}}>
       <App />
-      </WordBankContext.Provider>
-    {/* </ThemeProvider> */}
+    </WordBankContext.Provider>
   </BrowserRouter>,
   document.getElementById('root')
 );

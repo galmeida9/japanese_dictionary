@@ -27,8 +27,11 @@ const useStyles = makeStyles((theme) => ({
       padding: "16pt",
       paddingTop: "10pt"
     },
-    kanji: {
+    kanjiBig: {
         fontSize: '64pt'
+    },
+    kanjiSmall: {
+        fontSize: '36pt'
     },
     strokes: {
         textAlign: 'center'
@@ -165,7 +168,11 @@ export default function DefinitionScreen(props) {
                 <table style={{marginTop: '-10pt'}}>
                     <tbody>
                         <tr>
-                            <td id="kanji" className={classes.kanji}>{props.match.params.name}</td>
+                            <td 
+                            id="kanji" 
+                            className={props.match.params.name == item.japanese[0].reading ? classes.kanjiSmall : classes.kanjiBig}>
+                                {props.match.params.name}
+                            </td>
                             <td style={{paddingLeft: '22pt'}}>
                                 <p className={classes.translation}>{item.senses[0].english_definitions[0]}</p>
                                 <p className={classes.hiragana}>{item.japanese[0].reading}</p>
