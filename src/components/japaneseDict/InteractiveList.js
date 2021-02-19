@@ -12,6 +12,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import WordBankContext from '../WordBankContext';
 import DoneIcon from '@material-ui/icons/Done';
 import Chip from '@material-ui/core/Chip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,6 +33,12 @@ const useStyles = makeStyles((theme) => ({
         marginRight: '0pt',
         userSelect: 'none'
     },
+    loading: {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+    }
 }));
 
 function Alert(props) {
@@ -90,8 +97,8 @@ export default function CheckboxListSecondary(props) {
         return false;
     }
 
-    if (json != null && json["data"].length > 0) {
-        json = json["data"]
+    if (json != null && json["data"].length > 0 && !props.loadingAnimation) {
+        json = json["data"];
         return (
             <div>
                 <List dense className={classes.root}>
@@ -108,9 +115,9 @@ export default function CheckboxListSecondary(props) {
                     {json.map((value) => {
                         const labelId = `checkbox-list-secondary-label-${value}`;
                         return (
-                            <ListItem button onClick={() => {history.push(makeUrl(value["slug"]));}} key={value["slug"]}>
+                            <ListItem button onClick={() => {history.push(makeUrl(value["slug"].replace("-1", "")));}} key={value["slug"]}>
                                 <ListItemText id={labelId} 
-                                    primary={`${value["slug"]}`} 
+                                    primary={`${value["slug"].replace("-1", "")}`} 
                                     secondary={`${value["japanese"][0]["reading"]}`} 
                                     primaryTypographyProps={{variant: "h6"}}    
                                 />
@@ -136,12 +143,19 @@ export default function CheckboxListSecondary(props) {
             </div>
         );
     }
-    else if (json != null && json.meta.status == 200){
+    else if (json != null && json.meta.status == 200 && !props.loadingAnimation){
         return (
             <div className={classes.noResults}>
                 <h1>No Results Found</h1>
                 <p style={{fontSize:'14pt'}}>You can search in english, hiragana, katakana, kanji and in romanji</p>
             </div>
+        )
+    }
+    else if (props.loadingAnimation) {
+        return (
+            <div className={classes.loading}>
+                <CircularProgress />
+            </div> 
         )
     }
     else {

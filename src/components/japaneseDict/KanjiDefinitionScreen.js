@@ -132,7 +132,7 @@ export default function KanjiDefinitionScreen(props) {
     const addToWordBank = () => {
         let word = {
             "kanji": props.match.params.name,
-            "hira": item.kunyomi,
+            "hira": item.kunyomi[0],
             "english": item.meaning
         }
 
@@ -191,7 +191,7 @@ export default function KanjiDefinitionScreen(props) {
                         { showStrokes ? (<td><img id="gif" src={item.strokeOrderGifUri} className={classes.gif} /></td>) : (<td style={{display: 'none'}}><span/></td>) }
                         <td style={{paddingLeft: '22pt'}}>
                             <p className={classes.translation}>{item.meaning}</p>
-                            <p className={classes.hiragana}>{item.kunyomi}</p>
+                            { item.kunyomi != null ? (<p className={classes.hiragana}>{item.kunyomi[0]}</p>) : (<p/>) }
                         </td>
                     </tr>
                     <tr>
@@ -212,7 +212,7 @@ export default function KanjiDefinitionScreen(props) {
             <Grid container alignItems="stretch">
                 { JSON.stringify(item) != "{}" ? (
                     item.kunyomiExamples.map((value, index) => {
-                        if (index >= 4) {
+                        if (index >= 4 && index < 8) {
                             return (makeExampleCard(value))
                         }
                     }) 

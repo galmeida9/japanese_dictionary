@@ -6,8 +6,8 @@ let mainWindow;
  
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width:800,
-        height:600,
+        width:1000,
+        height:650,
         show: false,
         webPreferences: {
             webSecurity: false,
@@ -22,7 +22,7 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-    mainWindow.removeMenu()
+    // mainWindow.removeMenu()
 }
 app.on('ready', createWindow);
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');

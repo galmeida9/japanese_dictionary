@@ -13,7 +13,7 @@ export class JapaneseScreen extends Component {
             <div>
                 <Switch>
                     <Route path="/" exact render={(props) => (
-                        <InteractiveList {...props} itemToSearch={this.props.itemToSearch} />
+                        <InteractiveList {...props} itemToSearch={this.props.itemToSearch} loadingAnimation={this.props.loadingAnimation} />
                     )}/>
                     <Route path="/kanjiDefinition/:name" component={KanjiDefinitionScreen}/>
                     <Route path="/Definition/:name" component={DefinitionScreen}/>
