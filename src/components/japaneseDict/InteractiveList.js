@@ -89,14 +89,6 @@ export default function CheckboxListSecondary(props) {
         setError(false);
     };
 
-    const checkWordBank = (kanji) => {
-        if (context.state.japanese.filter(el => kanji == el.kanji).length > 0) {
-            return true;
-        }
-
-        return false;
-    }
-
     if (json != null && json["data"].length > 0 && !props.loadingAnimation) {
         json = json["data"];
         return (
@@ -122,7 +114,7 @@ export default function CheckboxListSecondary(props) {
                                     primaryTypographyProps={{variant: "h6"}}    
                                 />
                                 <ListItemSecondaryAction>
-                                    {checkWordBank(value["slug"]) ? (
+                                    {context.checkWord(value["slug"]) ? (
                                         <Chip
                                             label="In Word Bank"
                                             color="primary"

@@ -64,8 +64,18 @@ export default function App (props) {
     setWords(words);
   }
 
+  const checkWordBank = (kanji) => {
+    if (words.japanese.filter(el => kanji == el.kanji).length > 0) {
+        return true;
+    }
+
+    return false;
+  }
+
   return (
-    <WordBankContext.Provider value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore, setTheme: setTheme}}>
+    <WordBankContext.Provider 
+      value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore, setTheme: setTheme, checkWord: checkWordBank}}
+      >
       <ThemeProvider theme={currTheme}>
         <CssBaseline />
         <div className="App">
