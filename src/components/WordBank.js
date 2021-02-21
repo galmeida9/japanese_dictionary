@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { useHistory } from 'react-router-dom';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
 import WordBankContext from './WordBankContext';
+import TextField from '@material-ui/core/TextField';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -171,10 +172,24 @@ export default function WordBank() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [open, setOpen] = React.useState(false);
+    const [displayed, setDisplayed] = React.useState([]);
+    
     const history = useHistory();
-
     const context = useContext(WordBankContext);
     const classes = useStyles();
+
+    useEffect(() => {
+        copyWords();
+    }, [])
+
+    const copyWords = () => {
+        let list = [];
+        context.state.japanese.forEach((word) => {
+            list.push(word);
+        });
+        
+        setDisplayed(list);
+    }
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -193,7 +208,7 @@ export default function WordBank() {
     
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = context.state.japanese.map((n) => n.kanji);
+            const newSelecteds = displayed.map((n) => n.kanji);
             setSelected(newSelecteds);
             return;
         }
@@ -231,7 +246,7 @@ export default function WordBank() {
     
     const isSelected = (name) => selected.indexOf(name) !== -1;
     
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, context.state.japanese.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, displayed.length - page * rowsPerPage);
 
     const deleteWords = () => {
         selected.forEach(word => context.removeValue(word));
@@ -245,6 +260,20 @@ export default function WordBank() {
         }
         else {
             history.push("/kanjiDefinition/" + name);
+        }
+    }
+
+    const searchWord = (event) => {
+        if (event.keyCode == 13) {
+            let query = event.target.value;
+            let newList = [];
+            context.state.japanese.forEach((word) => {
+                if (word.kanji.includes(query) || (word.hira != null && word.hira.includes(query)) || word.english.includes(query)) {
+                    newList.push(word);
+                }
+            });
+
+            setDisplayed(newList);
         }
     }
 
@@ -264,7 +293,7 @@ export default function WordBank() {
                 </Typography>
                 ) : (
                 <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    Word Bank
+                    Your Word Bank
                 </Typography>
             )}
       
@@ -274,7 +303,7 @@ export default function WordBank() {
                         <DeleteIcon/>
                     </IconButton>
                 </Tooltip>
-            ) : (<span/>)}
+            ) : (<TextField id="standard-basic" label="Search Word Bank" onKeyDown={searchWord} style={{marginRight: '10pt'}}/>)}
           </Toolbar>
         );
     };
@@ -306,10 +335,10 @@ export default function WordBank() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={context.state.japanese.length}
+                            rowCount={displayed.length}
                         />
                         <TableBody>
-                        {stableSort(context.state.japanese, getComparator(order, orderBy))
+                        {stableSort(displayed, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                             const isItemSelected = isSelected(row.kanji);
@@ -359,7 +388,7 @@ export default function WordBank() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={context.state.japanese.length}
+                    count={displayed.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}

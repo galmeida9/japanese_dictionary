@@ -96,7 +96,6 @@ export default function DefinitionScreen(props) {
         const examples = JSON.parse(JSON.stringify(data2, null, 2));
 
         setItem(item.data[0]);
-        console.log(item.data[0])
         setExamples(examples.results);
         if (item.data[0].jlpt.length > 0) {
             setJlpt(item.data[0].jlpt[0].toUpperCase());

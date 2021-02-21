@@ -77,10 +77,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SearchAppBar(props) {
+  const [state, setState] = React.useState({left: false,});
+  const [currScreen, setCurrScreen] = React.useState("Japanese Dictionary");
+
   const classes = useStyles();
   const JishoApi = require('unofficial-jisho-api');
   const jisho = new JishoApi();
-  const [state, setState] = React.useState({left: false,});
   const history = useHistory();
   const context = useContext(WordBankContext);
 
@@ -115,21 +117,21 @@ export default function SearchAppBar(props) {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}} onClick={() => {history.push("/")}}>
+        <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}} onClick={() => {history.push("/");setCurrScreen("Japanese Dictionary")}}>
           <ListItemIcon>
               <LanguageIcon />
           </ListItemIcon>
           <ListItemText primary={"Japanese Dictionary"} />
         </ListItem>
 
-        <ListItem button key={"Word Bank"} onClick={() => {history.push("/wordBank")}}>
+        <ListItem button key={"Word Bank"} onClick={() => {history.push("/wordBank");setCurrScreen("Word Bank")}}>
           <ListItemIcon>
               <StorageIcon />
           </ListItemIcon>
           <ListItemText primary={"Word Bank"} />
         </ListItem>
 
-        <ListItem button key={"Practice"} onClick={() => {history.push("/practice")}}>
+        <ListItem button key={"Practice"} onClick={() => {history.push("/practice");setCurrScreen("Practice")}}>
           <ListItemIcon>
               <ImportContactsRoundedIcon />
           </ListItemIcon>
@@ -139,7 +141,7 @@ export default function SearchAppBar(props) {
       </List>
       <Divider />
       <List>
-        <ListItem button key={"Settings"} onClick={() => {history.push("/settings")}}>
+        <ListItem button key={"Settings"} onClick={() => {history.push("/settings");setCurrScreen("Settings")}}>
           <ListItemIcon>
               <SettingsIcon />
           </ListItemIcon>
@@ -162,7 +164,7 @@ export default function SearchAppBar(props) {
                     <MenuIcon />
                 </IconButton>
                 <Typography className={classes.title} variant="h6" noWrap>
-                    Japanese
+                    {currScreen}
                 </Typography>
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>

@@ -142,7 +142,7 @@ export default function Settings (props) {
     };
 
     return (
-        <div className={classes.root}>
+        <div>
             <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
                 <Alert onClose={handleClose} severity="success">
                     { success ? ("All words were imported!") : ("Login Successful") }
@@ -153,62 +153,64 @@ export default function Settings (props) {
                     Wrong Credentials
                 </Alert>
             </Snackbar>
-            <FormControl component="fieldset">
-                <FormLabel component="legend">Personalization options</FormLabel>
-                <FormGroup>
-                    <FormControlLabel
-                    control={<Switch checked={state.dark} onChange={handleChange} name="dark" color="primary" />}
-                    label="Dark Mode"
+            <div className={classes.root}>
+                <FormControl component="fieldset">
+                    <FormLabel component="legend">Personalization options</FormLabel>
+                    <FormGroup>
+                        <FormControlLabel
+                        control={<Switch checked={state.dark} onChange={handleChange} name="dark" color="primary" />}
+                        label="Dark Mode"
+                        />
+                    </FormGroup>
+                </FormControl>
+                <Divider style={{marginTop: '10pt', marginBottom: '10pt'}}/>
+                <FormLabel component="legend">Get Duolingo word bank</FormLabel>
+                <form className={classes.form} noValidate>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        autoFocus
+                        value={username}
+                        onChange={(e)=>{setUsername(e.target.value)}}
                     />
-                </FormGroup>
-            </FormControl>
-            <Divider style={{marginTop: '10pt', marginBottom: '10pt'}}/>
-            <FormLabel component="legend">Get Duolingo word bank</FormLabel>
-            <form className={classes.form} noValidate>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Username"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
-                    value={username}
-                    onChange={(e)=>{setUsername(e.target.value)}}
-                />
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e)=>{setPassword(e.target.value)}}
-                    onKeyDown={performLogin}
-                />
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={getDuoWords}
-                >
-                    Log In
-                </Button>
-            </form>
-            { loading ? (
-                <div style={{marginTop: '12pt'}}>
-                    <FormLabel component="legend">Found {totalWords} words</FormLabel>
-                    <LinearProgress variant="determinate" value={progress} style={{marginTop: '10pt'}}/>
-                </div>
-                ) : (<span/>) 
-            }
-            { totalImp != -1? (<FormLabel component="legend" style={{marginTop: '12pt'}}>Imported {totalImp} words</FormLabel>) : (<span/>) }
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e)=>{setPassword(e.target.value)}}
+                        onKeyDown={performLogin}
+                    />
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        onClick={getDuoWords}
+                    >
+                        Log In
+                    </Button>
+                </form>
+                { loading ? (
+                    <div style={{marginTop: '12pt'}}>
+                        <FormLabel component="legend">Found {totalWords} words</FormLabel>
+                        <LinearProgress variant="determinate" value={progress} style={{marginTop: '10pt'}}/>
+                    </div>
+                    ) : (<span/>) 
+                }
+                { totalImp != -1? (<FormLabel component="legend" style={{marginTop: '12pt'}}>Imported {totalImp} words</FormLabel>) : (<span/>) }
+            </div>
         </div>
     )
 }
