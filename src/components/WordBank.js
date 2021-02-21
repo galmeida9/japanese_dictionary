@@ -157,9 +157,11 @@ const useStyles = makeStyles((theme) => ({
         top: 20,
         width: 1,
     },
-    selected: {
+    selected: 
+        theme.palette.type === 'light'
+    ? {
         backgroundColor: lighten(theme.palette.primary.light, 0.7) + '!important'
-    }
+    } : { }
 }));
 
 export default function WordBank() {

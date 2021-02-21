@@ -46,6 +46,9 @@ export default function Settings (props) {
     const [error, setError] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
+    const [progress, setProgress] = React.useState(0);
+    const [totalWords, setTotalWords] = React.useState(0);
+    const [totalImp, setTotalImp] = React.useState(-1);
 
     const classes = useStyles();
     const JishoApi = require('unofficial-jisho-api');
@@ -67,7 +70,7 @@ export default function Settings (props) {
                 setOpen(true);
                 setLoading(true);
                 duo.getLearnedWords().then((words) => {
-                    console.log(words)
+                    setTotalWords(words.length);
                     addDuoWords(words);
                 })
             }
@@ -77,14 +80,17 @@ export default function Settings (props) {
         })
     }
 
-    const addDuoWords = (list) => {
-        list.forEach(async (word) => {
+    const addDuoWords = async (list) => {
+        let imported = 0;
+        for (let i = 0; i < list.length; i++) {
+            let word = list[i];
             if (!context.checkWord(word)) {
                 if (word.length == 1) {
                     let data = await jisho.searchForKanji(word);
                     let item = JSON.parse(JSON.stringify(data, null, 2));
                     
                     if (item.found) {
+                        imported++;
                         let newWord = {
                             "kanji": word,
                             "hira": item.kunyomi[0],
@@ -99,6 +105,7 @@ export default function Settings (props) {
                     let item = JSON.parse(JSON.stringify(data, null, 2));
                     
                     if (item.meta.status == 200 && item.data.length > 0) {
+                        imported++;
                         let newWord = {
                             "kanji": word,
                             "hira": item.data[0].japanese[0].reading,
@@ -109,8 +116,11 @@ export default function Settings (props) {
                     }
                 }
             }
-        })
 
+            setProgress(i/(list.length-1)*100);
+        }
+
+        setTotalImp(imported);
         setLoading(false);
         setSuccess(true);
     }
@@ -191,7 +201,14 @@ export default function Settings (props) {
                     Log In
                 </Button>
             </form>
-            { loading ? (<LinearProgress style={{marginTop: '10pt'}}/>) : (<span/>) }
+            { loading ? (
+                <div style={{marginTop: '12pt'}}>
+                    <FormLabel component="legend">Found {totalWords} words</FormLabel>
+                    <LinearProgress variant="determinate" value={progress} style={{marginTop: '10pt'}}/>
+                </div>
+                ) : (<span/>) 
+            }
+            { totalImp != -1? (<FormLabel component="legend" style={{marginTop: '12pt'}}>Imported {totalImp} words</FormLabel>) : (<span/>) }
         </div>
     )
 }
