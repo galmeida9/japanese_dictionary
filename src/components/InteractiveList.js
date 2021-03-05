@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import WordBankContext from '../WordBankContext';
+import WordBankContext from './WordBankContext';
 import DoneIcon from '@material-ui/icons/Done';
 import Chip from '@material-ui/core/Chip';
 import CircularProgress from '@material-ui/core/CircularProgress';

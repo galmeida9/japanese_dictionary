@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import clsx from 'clsx';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -68,9 +68,9 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '12ch',
+      width: '17ch',
       '&:focus': {
-        width: '20ch',
+        width: '22ch',
       },
     },
   },
@@ -85,6 +85,11 @@ export default function SearchAppBar(props) {
   const jisho = new JishoApi();
   const history = useHistory();
   const context = useContext(WordBankContext);
+  
+  useEffect(() => {
+    history.push("/");
+    setCurrScreen("Japanese Dictionary")
+  }, [])
 
   const performSearch = (event) => {
     if (event.keyCode == 13) {
@@ -171,7 +176,7 @@ export default function SearchAppBar(props) {
                     <SearchIcon />
                     </div>
                     <InputBase
-                      placeholder="Search…"
+                      placeholder="Search in dictionary"
                       classes={{
                           root: classes.inputRoot,
                           input: classes.inputInput,

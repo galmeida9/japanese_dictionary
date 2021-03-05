@@ -25,7 +25,7 @@ export default class DuoAPI {
         return result.data;
     }
 
-    async getLearnedWords() {
+    async getLearnedWords_Old() {
         const result = await axios({
             url: this.baseUrl + "users/" + this.username,
             method: "GET",
@@ -41,6 +41,25 @@ export default class DuoAPI {
             if(topic.learned){
                 words = words.concat(topic['words']);
             }
+        });
+
+        return words;
+    }
+
+    async getLearnedWords() {
+        const result = await axios({
+            url: this.baseUrl + "vocabulary/overview",
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + this.jwt
+            }
+        });
+
+        const data = result.data;
+        let words = [];
+
+        data.vocab_overview.forEach(word => {
+            words = words.concat(word.word_string);
         });
 
         return words;

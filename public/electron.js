@@ -6,13 +6,14 @@ let mainWindow;
  
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width:1000,
-        height:650,
+        width:1100,
+        height:700,
         show: false,
         webPreferences: {
             webSecurity: false,
             nodeIntegration: true
-        }
+        },
+        icon: path.join(__dirname, 'kanji.ico')
     });
     const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
  
@@ -22,7 +23,7 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-    // mainWindow.removeMenu()
+    mainWindow.removeMenu()
 }
 app.on('ready', createWindow);
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');

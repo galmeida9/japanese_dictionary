@@ -129,7 +129,7 @@ const useToolbarStyles = makeStyles((theme) => ({
           }
         : {
             color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
+            backgroundColor: theme.palette.primary.dark,
         },
     title: {
         flex: '1 1 100%',
@@ -162,7 +162,9 @@ const useStyles = makeStyles((theme) => ({
         theme.palette.type === 'light'
     ? {
         backgroundColor: lighten(theme.palette.primary.light, 0.7) + '!important'
-    } : { }
+    } : { 
+        backgroundColor: lighten(theme.palette.primary.main, 0.2) + '!important'
+    }
 }));
 
 export default function WordBank() {
@@ -249,9 +251,17 @@ export default function WordBank() {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, displayed.length - page * rowsPerPage);
 
     const deleteWords = () => {
-        selected.forEach(word => context.removeValue(word));
+        selected.forEach((word) => {
+            context.removeValue(word);
+            let wordsCopy = displayed;
+            let index = wordsCopy.map(e => e.kanji).indexOf(word)
+            if (index != -1) {
+                displayed.splice(index, 1);
+            }
+        });
         setOpen(true);
         setSelected([]);
+        setDisplayed(displayed);
     }
 
     const openDefinition = (name) => {

@@ -3,9 +3,9 @@ import {Switch, Route} from 'react-router-dom';
 import InteractiveList from './InteractiveList';
 import KanjiDefinitionScreen from './KanjiDefinitionScreen';
 import DefinitionScreen from './DefinitionScreen';
-import WordBank from '../WordBank'
-import Practice from '../Practice'
-import Settings from '../Settings'
+import WordBank from './WordBank'
+import Practice from './Practice'
+import Settings from './Settings'
 
 export class JapaneseScreen extends Component {
     render() {

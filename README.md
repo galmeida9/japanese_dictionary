@@ -8,4 +8,4 @@ I am currently learning japanese on my own, and I wanted to print out some flash
 * **Dark mode**: dark mode is supported and your preference is saved, so the next time you use the app your eyes can be relaxed.
 
 ### Releases
-You can grab the latest **Windows** executable [here](https://github.com/galmeida9/word_bank/releases), although a **linux** one is provided, I have yet to test it.
+You can grab the latest **Windows** executable [here](https://github.com/galmeida9/japanese_dictionary/releases), although a **linux** one is provided, I have yet to test it.

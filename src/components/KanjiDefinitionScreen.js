@@ -14,7 +14,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import Chip from '@material-ui/core/Chip';
 import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import WordBankContext from '../WordBankContext';
+import WordBankContext from './WordBankContext';
 import AddIcon from '@material-ui/icons/Add';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -181,7 +181,7 @@ export default function KanjiDefinitionScreen(props) {
                     {showStrokes ? "Hide Stroke Order" : "Show Stroke Order"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
+                    <ArrowBackIcon onClick={() => {history.push("/");}}/>
                 </Fab>
             </div>
             <table style={{marginTop: '-10pt'}}>

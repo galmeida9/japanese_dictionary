@@ -1,7 +1,7 @@
 {
   "name": "japanese_dictionary",
   "productName": "Japanese Dictionary",
-  "version": "1.0.0",
+  "version": "1.2.2",
   "description": "A japanese dictionary with word bank and practice game",
   "private": true,
   "dependencies": {

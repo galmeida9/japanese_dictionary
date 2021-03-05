@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchAppBar from './components/SearchAppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import JapaneseScreen from './components/japaneseDict/JapaneseScreen';
+import JapaneseScreen from './components/JapaneseScreen';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { lightTheme, darkTheme } from './components/themes';
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -72,9 +72,15 @@ export default function App (props) {
     return false;
   }
 
+  const importWords = (newWords) => {
+    words.japanese = newWords.japanese;
+    words.highscore = newWords.highscore;
+    words.dark = newWords.dark;
+  }
+
   return (
     <WordBankContext.Provider 
-      value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore, setTheme: setTheme, checkWord: checkWordBank}}
+      value={{state: words, addValue: addWord, removeValue: removeWord, setScore: setHighScore, setTheme: setTheme, checkWord: checkWordBank, upload: importWords}}
       >
       <ThemeProvider theme={currTheme}>
         <CssBaseline />

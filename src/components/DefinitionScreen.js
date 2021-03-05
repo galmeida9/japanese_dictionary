@@ -14,7 +14,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import Chip from '@material-ui/core/Chip';
 import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import WordBankContext from '../WordBankContext';
+import WordBankContext from './WordBankContext';
 import AddIcon from '@material-ui/icons/Add';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -132,6 +132,24 @@ export default function DefinitionScreen(props) {
         setOpen(false);
     };
 
+    const makeCard = (value) => {
+        return (
+            <Grid item component={Card} xs className={classes.card} key={value.english_definitions}>
+                <CardContent>
+                    <Typography className={classes.pos} color="textSecondary">
+                        {value.parts_of_speech}
+                    </Typography>
+                    <Typography variant="h5" component="h2">
+                        {value.english_definitions.join(", ")}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                        {value.meaning}
+                    </Typography>
+                </CardContent>
+            </Grid>
+        )
+    }
+
     return (
         <div className={classes.root}>
             <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
@@ -161,7 +179,7 @@ export default function DefinitionScreen(props) {
                     {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
+                    <ArrowBackIcon onClick={() => {history.push("/");}}/>
                 </Fab>
             </div>
             { JSON.stringify(item) != "{}" ? (
@@ -186,22 +204,19 @@ export default function DefinitionScreen(props) {
             ) : (<span/>) }
             <Grid container alignItems="stretch">
                 { JSON.stringify(item) != "{}" ? (
-                    item.senses.map((value) => {
-                        return (
-                             <Grid item component={Card} xs className={classes.card} key={value.english_definitions}>
-                                <CardContent>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        {value.parts_of_speech}
-                                    </Typography>
-                                    <Typography variant="h5" component="h2">
-                                        {value.english_definitions.join(", ")}
-                                    </Typography>
-                                    <Typography variant="body2" component="p">
-                                        {value.meaning}
-                                    </Typography>
-                                </CardContent>
-                            </Grid>
-                        )
+                    item.senses.map((value, index) => {
+                        if (index < 4) {
+                            return (makeCard(value))
+                        }
+                    })
+                ) : (<span />)}
+            </Grid>
+            <Grid container alignItems="stretch">
+                { JSON.stringify(item) != "{}" ? (
+                    item.senses.map((value, index) => {
+                        if (index >= 4 && index < 8) {
+                            return (makeCard(value))
+                        }
                     })
                 ) : (<span />)}
             </Grid>
