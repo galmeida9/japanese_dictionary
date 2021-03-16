@@ -45,15 +45,6 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const makeUrl = (name) => {
-    if (name.length == 1) {
-        return "/kanjiDefinition/" + name
-    }
-    else {
-        return "/definition/" + name
-    }
-}
-
 export default function CheckboxListSecondary(props) {
     const classes = useStyles();
     const history = useHistory();
@@ -64,14 +55,14 @@ export default function CheckboxListSecondary(props) {
 
     let json = JSON.parse(props.itemToSearch);
 
-    const addToWordBank = (wordData) => {
+    const addToWordBank = (wordData, title) => {
         let word = {
-            "kanji": wordData["slug"],
-            "hira": wordData["japanese"][0]["reading"],
-            "english": wordData["senses"][0]["english_definitions"][0]
+            "kanji": title,
+            "hira": wordData.japanese[0].reading,
+            "english": wordData.senses[0].english_definitions[0]
         }
 
-        if (context.state.japanese.filter(e => e.kanji === word["kanji"]).length > 0) {
+        if (context.state.japanese.filter(e => e.kanji === word.kanji).length > 0) {
             setError(true);
         }
         else {
@@ -89,57 +80,77 @@ export default function CheckboxListSecondary(props) {
         setError(false);
     };
 
+    const makeUrl = (name) => {
+        if (name.length == 1) {
+            return "/kanjiDefinition/" + name
+        }
+        else {
+            return "/definition/" + name
+        }
+    }
+
     if (json != null && json["data"].length > 0 && !props.loadingAnimation) {
         json = json["data"];
         return (
             <div>
                 <List dense className={classes.root}>
-                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleClose} severity="success">
                             Added word to Word Bank
                         </Alert>
                     </Snackbar>
-                    <Snackbar open={error} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+                    <Snackbar open={error} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                         <Alert onClose={handleClose} severity="error">
                             Word already in Word Bank
                         </Alert>
                     </Snackbar>
                     {json.map((value) => {
-                        const labelId = `checkbox-list-secondary-label-${value}`;
-                        return (
-                            <ListItem button onClick={() => {history.push(makeUrl(value["slug"].replace("-1", "")));}} key={value["slug"]}>
-                                <ListItemText id={labelId} 
-                                    primary={`${value["slug"].replace("-1", "")}`} 
-                                    secondary={`${value["japanese"][0]["reading"]}`} 
-                                    primaryTypographyProps={{variant: "h6"}}    
-                                />
-                                <ListItemSecondaryAction>
-                                    {context.checkWord(value["slug"]) ? (
-                                        <Chip
-                                            label="In Word Bank"
-                                            color="primary"
-                                            classes={{colorPrimary: classes.wordBank}}
-                                            onDelete={() => {}}
-                                            deleteIcon={<DoneIcon />}
-                                        />
+                        var title = value.slug;
+                        if (title.match("[a-zA-Z0-9]")) {
+                            const japanese = value.japanese[0];
+                            title = japanese.hasOwnProperty("reading") ? japanese.reading : japanese.word;
+                        }
+                        else {
+                            title = title.replace("-1", "");
+                        }
+
+                        if (typeof value.slug !== "undefined") {
+                            return (
+                                <ListItem button onClick={() => { history.push(makeUrl(title)); }} key={value.slug}>
+                                    <ListItemText id={value}
+                                        primary={`${title}`}
+                                        secondary={value.slug == title ? (`${value.japanese[0].reading}`) : null}
+                                        primaryTypographyProps={{ variant: "h6" }}
+                                        style={value.slug != title ? {padding: "8pt"} : null}
+                                    />
+                                    <ListItemSecondaryAction>
+                                        {context.checkWord(title) ? (
+                                            <Chip
+                                                label="In Word Bank"
+                                                color="primary"
+                                                classes={{ colorPrimary: classes.wordBank }}
+                                                onDelete={() => { }}
+                                                deleteIcon={<DoneIcon />}
+                                            />
                                         ) : (
-                                            <IconButton edge="end" aria-label="Add" onClick={() => {addToWordBank(value)}}>
-                                                <AddIcon />
-                                            </IconButton>
-                                    )}
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        );
+                                                <IconButton edge="end" aria-label="Add" onClick={() => { addToWordBank(value, title) }}>
+                                                    <AddIcon />
+                                                </IconButton>
+                                            )}
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            );
+                        }
                     })}
                 </List>
             </div>
         );
     }
-    else if (json != null && json.meta.status == 200 && !props.loadingAnimation){
+    else if (json != null && json.meta.status == 200 && !props.loadingAnimation) {
         return (
             <div className={classes.noResults}>
                 <h1>No Results Found</h1>
-                <p style={{fontSize:'14pt'}}>You can search in english, hiragana, katakana, kanji and in romanji</p>
+                <p style={{ fontSize: '14pt' }}>You can search in english, hiragana, katakana, kanji and in romanji</p>
             </div>
         )
     }
@@ -147,13 +158,13 @@ export default function CheckboxListSecondary(props) {
         return (
             <div className={classes.loading}>
                 <CircularProgress />
-            </div> 
+            </div>
         )
     }
     else {
         return (
             <div>
-                <h1 className={classes.noResults} style={{width: '100%'}}>Search something in the search bar :)</h1>
+                <h1 className={classes.noResults} style={{ width: '100%' }}>Search something in the search bar :)</h1>
             </div>
         )
     }

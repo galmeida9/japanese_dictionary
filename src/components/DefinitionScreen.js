@@ -179,7 +179,7 @@ export default function DefinitionScreen(props) {
                     {showEx ? "Hide Examples" : "Show Examples"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <ArrowBackIcon onClick={() => {history.push("/");}}/>
+                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
                 </Fab>
             </div>
             { JSON.stringify(item) != "{}" ? (
@@ -188,7 +188,7 @@ export default function DefinitionScreen(props) {
                         <tr>
                             <td 
                             id="kanji" 
-                            className={props.match.params.name == item.japanese[0].reading ? classes.kanjiSmall : classes.kanjiBig}>
+                            className={item.slug.match("[a-zA-Z0-9]") ? classes.kanjiSmall : classes.kanjiBig}>
                                 {props.match.params.name}
                             </td>
                             <td style={{paddingLeft: '22pt'}}>

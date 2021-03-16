@@ -181,7 +181,7 @@ export default function KanjiDefinitionScreen(props) {
                     {showStrokes ? "Hide Stroke Order" : "Show Stroke Order"}
                 </Button>
                 <Fab color="primary" aria-label="add">
-                    <ArrowBackIcon onClick={() => {history.push("/");}}/>
+                    <ArrowBackIcon onClick={() => {history.goBack()}}/>
                 </Fab>
             </div>
             <table style={{marginTop: '-10pt'}}>

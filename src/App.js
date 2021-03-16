@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import SearchAppBar from './components/SearchAppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import JapaneseScreen from './components/JapaneseScreen';

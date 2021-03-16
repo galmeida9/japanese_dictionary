@@ -94,7 +94,7 @@ export default function SearchAppBar(props) {
   const performSearch = (event) => {
     if (event.keyCode == 13) {
       props.loading(true);
-      jisho.searchForPhrase(event.target.value).then((data) => {
+      jisho.searchForPhrase(event.target.value.toLowerCase()).then((data) => {
         if (event.target.value == "") {
           data.meta.status = 400;
         }

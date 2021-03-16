@@ -80,9 +80,8 @@ export default function Settings(props) {
         setPassword("");
 
         duo.login().then((response) => {
-            console.log(response)
             if (!response.hasOwnProperty("failure")) {
-                setSuccessMessage("setSuccessMessage");
+                setSuccessMessage("Login Successful");
                 setOpen(true);
                 setLoading(true);
                 duo.getLearnedWords().then((words) => {
@@ -187,7 +186,7 @@ export default function Settings(props) {
                     }
                     else {
                         let parsedJson = JSON.parse(data);
-                        if (!parsedJson.hasOwnProperty("japanese")) {
+                        if (!parsedJson.hasOwnProperty("japanese") || !parsedJson.hasOwnProperty("highscore") || !parsedJson.hasOwnProperty("dark")) {
                             setErrorMessage("Invalid JSON");
                             setError(true);
                         }
