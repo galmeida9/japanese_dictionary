@@ -59,7 +59,8 @@ export default function CheckboxListSecondary(props) {
         let word = {
             "kanji": title,
             "hira": wordData.japanese[0].reading,
-            "english": wordData.senses[0].english_definitions[0]
+            "english": wordData.senses[0].english_definitions[0],
+            "jlpt": wordData.jlpt[0].split("jlpt-")[1].toUpperCase()
         }
 
         if (context.state.japanese.filter(e => e.kanji === word.kanji).length > 0) {

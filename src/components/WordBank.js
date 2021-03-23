@@ -24,6 +24,10 @@ import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
 import WordBankContext from './WordBankContext';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -61,6 +65,7 @@ const headCells = [
     { id: 'def', numeric: false, disablePadding: false, label: 'Definition' },
     { id: 'hira', numeric: false, disablePadding: false, label: 'Hiragana' },
     { id: 'english', numeric: false, disablePadding: false, label: 'English' },
+    { id: 'jlpt', numeric: false, disablePadding: false, label: 'JLPT Level' },
 ];
 
 function EnhancedTableHead(props) {
@@ -177,10 +182,16 @@ export default function WordBank() {
     const [open, setOpen] = React.useState(false);
     const [displayed, setDisplayed] = React.useState([]);
     const [search, setSearch] = React.useState("");
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [width, setWidth] = React.useState(window.innerWidth);
+    const [filterChip, setFilterChip] = React.useState(false);
+    const [jlpt, setJlpt] = React.useState("");
 
     const history = useHistory();
     const context = useContext(WordBankContext);
     const classes = useStyles();
+
+    window.addEventListener('resize', () => { setWidth(window.innerWidth) })
 
     useEffect(() => {
         copyWords();
@@ -283,6 +294,7 @@ export default function WordBank() {
     }
 
     const searchWord = (query) => {
+        console.log(query)
         setSearch(query);
         let newList = [];
         context.state.japanese.forEach((word) => {
@@ -292,10 +304,46 @@ export default function WordBank() {
         });
 
         setDisplayed(newList);
+        return newList;
     }
 
     const clearSearch = () => {
         searchWord("");
+        if (filterChip) filter(jlpt, true);
+    }
+
+    const filter = (level, clear = false) => {
+        let newList = [];
+        let listToSearch = context.state.japanese;
+
+        if (!clear) {
+            listToSearch = searchWord(search);
+        }
+
+        listToSearch.forEach((word) => {
+            if (word.jlpt == level) {
+                newList.push(word);
+            }
+        });
+
+        closeFilter();
+        setDisplayed(newList);
+        setJlpt(level);
+        setFilterChip(true);
+    }
+
+    const clearFilter = () => {
+        setFilterChip(false);
+        if (search != "") searchWord(search);
+        else searchWord("");
+    }
+
+    const openFilter = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const closeFilter = () => {
+        setAnchorEl(null);
     }
 
     const EnhancedTableToolbar = (props) => {
@@ -327,7 +375,32 @@ export default function WordBank() {
                 ) : (
                         <div style={{ display: "flex" }}>
                             {search != "" ? (<Chip label={search} onDelete={clearSearch} color="primary" style={{ marginRight: '12pt', marginTop: '12pt' }} />) : null}
+                            {filterChip != "" ? (<Chip label={jlpt} onDelete={clearFilter} color="primary" style={{ marginRight: '12pt', marginTop: '12pt' }} />) : null}
                             <TextField id="standard-basic" label="Search Word Bank" onKeyDown={searchEvent} style={{ marginRight: '10pt', width: '140pt' }} />
+                            <IconButton style={{ marginTop: '8pt' }} onClick={openFilter} aria-controls="simple-menu" aria-haspopup="true">
+                                <FilterListIcon />
+                            </IconButton>
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={closeFilter}
+                                PaperProps={{
+                                    style: {
+                                        left: '50%',
+                                        transform: `translateX(${width - 130}px) translateY(80pt)`,
+                                    }
+                                }}
+                            >
+                                <Typography style={{ paddingRight: '8pt', paddingLeft: '8pt', paddingBottom: '4pt' }}>JLPT Level</Typography>
+                                <Divider />
+                                <MenuItem onClick={() => { filter("N1") }}>N1</MenuItem>
+                                <MenuItem onClick={() => { filter("N2") }}>N2</MenuItem>
+                                <MenuItem onClick={() => { filter("N3") }}>N3</MenuItem>
+                                <MenuItem onClick={() => { filter("N4") }}>N4</MenuItem>
+                                <MenuItem onClick={() => { filter("N5") }}>N5</MenuItem>
+                            </Menu>
                         </div>)}
             </Toolbar>
         );
@@ -399,6 +472,7 @@ export default function WordBank() {
                                             </TableCell>
                                             <TableCell align="left" style={{ fontSize: '14pt' }}>{row.hira}</TableCell>
                                             <TableCell align="left" style={{ fontSize: '12pt' }}>{row.english}</TableCell>
+                                            <TableCell align="left" style={{ fontSize: '12pt' }}>{row.jlpt}</TableCell>
                                         </TableRow>
                                     );
                                 })}

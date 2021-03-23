@@ -92,13 +92,13 @@ export default function DefinitionScreen(props) {
         let data = await jisho.searchForPhrase(props.match.params.name);
         let data2 = await jisho.searchForExamples(props.match.params.name);
 
-        const item = JSON.parse(JSON.stringify(data, null, 2));
-        const examples = JSON.parse(JSON.stringify(data2, null, 2));
+        const newItem = JSON.parse(JSON.stringify(data, null, 2)).data[0];
+        const newExamples = JSON.parse(JSON.stringify(data2, null, 2));
 
-        setItem(item.data[0]);
-        setExamples(examples.results);
-        if (item.data[0].jlpt.length > 0) {
-            setJlpt(item.data[0].jlpt[0].toUpperCase());
+        setItem(newItem);
+        setExamples(newExamples.results);
+        if (newItem.jlpt.length > 0) {
+            setJlpt(newItem.jlpt[0].toUpperCase());
         }
     }
 
@@ -116,7 +116,8 @@ export default function DefinitionScreen(props) {
         let word = {
             "kanji": props.match.params.name,
             "hira": item.japanese[0].reading,
-            "english": item.senses[0].english_definitions[0]
+            "english": item.senses[0].english_definitions[0],
+            "jlpt": item.jlpt[0].split("jlpt-")[1].toUpperCase()
         }
 
         context.addValue(word);

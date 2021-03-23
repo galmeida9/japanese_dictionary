@@ -110,7 +110,8 @@ export default function Settings(props) {
                         let newWord = {
                             "kanji": word,
                             "hira": item.kunyomi[0],
-                            "english": item.meaning
+                            "english": item.meaning,
+                            "jlpt": item.jlptLevel
                         }
 
                         context.addValue(newWord);
@@ -118,14 +119,16 @@ export default function Settings(props) {
                 }
                 else {
                     let data = await jisho.searchForPhrase(word);
-                    let item = JSON.parse(JSON.stringify(data, null, 2));
+                    let items = JSON.parse(JSON.stringify(data, null, 2));
 
-                    if (item.meta.status == 200 && item.data.length > 0) {
+                    if (items.meta.status == 200 && items.data.length > 0) {
                         imported++;
+                        let item = items.data[0];
                         let newWord = {
                             "kanji": word,
-                            "hira": item.data[0].japanese[0].reading,
-                            "english": item.data[0].senses[0].english_definitions[0]
+                            "hira": item.japanese[0].reading,
+                            "english": item.senses[0].english_definitions[0],
+                            "jlpt": item.jlpt.length > 0 ? item.jlpt[0].split("jlpt-")[1].toUpperCase() : "Unknown"
                         }
 
                         context.addValue(newWord);

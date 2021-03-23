@@ -88,11 +88,11 @@ export default function KanjiDefinitionScreen(props) {
         let data = await jisho.searchForKanji(props.match.params.name);
         let data2 = await jisho.searchForExamples(props.match.params.name);
 
-        const item = JSON.parse(JSON.stringify(data, null, 2));
-        const examples = JSON.parse(JSON.stringify(data2, null, 2));
+        const newItem = JSON.parse(JSON.stringify(data, null, 2));
+        const newExamples = JSON.parse(JSON.stringify(data2, null, 2));
         
-        setItem(item);
-        setExamples(examples.results);
+        setItem(newItem);
+        setExamples(newExamples.results);
     }
 
     const toggleExamples = () => {
@@ -133,7 +133,8 @@ export default function KanjiDefinitionScreen(props) {
         let word = {
             "kanji": props.match.params.name,
             "hira": item.kunyomi[0],
-            "english": item.meaning
+            "english": item.meaning,
+            "jlpt": item.jlptLevel
         }
 
         context.addValue(word);
