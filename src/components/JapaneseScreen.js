@@ -3,9 +3,10 @@ import {Switch, Route} from 'react-router-dom';
 import InteractiveList from './InteractiveList';
 import KanjiDefinitionScreen from './KanjiDefinitionScreen';
 import DefinitionScreen from './DefinitionScreen';
-import WordBank from './WordBank'
-import Practice from './Practice'
-import Settings from './Settings'
+import WordBank from './WordBank';
+import Practice from './Practice';
+import Settings from './Settings';
+import FlashCards from './FlashCards';
 
 export class JapaneseScreen extends Component {
     render() {
@@ -19,6 +20,7 @@ export class JapaneseScreen extends Component {
                     <Route path="/Definition/:name" component={DefinitionScreen}/>
                     <Route exact path="/wordBank" component={WordBank}/>
                     <Route exact path="/practice" component={Practice}/>
+                    <Route exact path="/flashcards" component={FlashCards}/>
                     <Route exact path="/settings" render={(props) => (
                         <Settings {...props} theme={this.props.theme} />
                     )}/>

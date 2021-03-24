@@ -191,7 +191,7 @@ export default function WordBank() {
     const context = useContext(WordBankContext);
     const classes = useStyles();
 
-    window.addEventListener('resize', () => { setWidth(window.innerWidth) })
+    window.addEventListener('resize', () => { setWidth(window.innerWidth); })
 
     useEffect(() => {
         copyWords();

@@ -20,6 +20,7 @@ import StorageIcon from '@material-ui/icons/Storage';
 import { useHistory } from 'react-router-dom';
 import ImportContactsRoundedIcon from '@material-ui/icons/ImportContacts';
 import WordBankContext from './WordBankContext';
+import CollectionsIcon from '@material-ui/icons/Collections';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,6 +135,13 @@ export default function SearchAppBar(props) {
               <StorageIcon />
           </ListItemIcon>
           <ListItemText primary={"Word Bank"} />
+        </ListItem>
+
+        <ListItem button key={"Flash Cards"} onClick={() => {history.push("/flashcards");setCurrScreen("Flash Cards")}}>
+          <ListItemIcon>
+              <CollectionsIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Flash Cards"} />
         </ListItem>
 
         <ListItem button key={"Practice"} onClick={() => {history.push("/practice");setCurrScreen("Practice")}}>
