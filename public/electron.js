@@ -23,7 +23,8 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-    // mainWindow.removeMenu()
+    mainWindow.removeMenu()
 }
 app.on('ready', createWindow);
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';

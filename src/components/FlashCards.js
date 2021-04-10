@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import WordBankContext from './WordBankContext';
 import Button from '@material-ui/core/Button';
@@ -14,15 +15,16 @@ export default function FlashCards(props) {
     const [reload, setReload] = React.useState(true);
     const [flip, setFlip] = React.useState(false);
 
+    const classes = useStyles();
     const context = useContext(WordBankContext);
     const history = useHistory();
 
     useEffect(() => {
         setReload(false);
-        if (currWord.kanji == "") {
+        if (context.state.japanese.length > 0 && currWord.kanji == "") {
             getRandomWord();
         }
-        
+
         window.addEventListener('keydown', manageKeyPress);
 
         //remove listener
@@ -72,6 +74,7 @@ export default function FlashCards(props) {
         }
 
         getRandomWord();
+        // reload event listener
         setReload(true);
     }
 
@@ -92,9 +95,6 @@ export default function FlashCards(props) {
             default:
                 break;
         }
-
-        event.stopPropagation();
-        event.preventDefault();
     }
 
     const buttons = () => {
@@ -170,7 +170,21 @@ export default function FlashCards(props) {
                         </BackSide>
                     </Flippy>
                 </div>
-            ) : null}
+            ) : (
+                    <div>
+                        <h1 className={classes.noWords} style={{ width: '100%' }}>Add words to your word bank to start practicing</h1>
+                    </div>
+                )}
         </div>
     )
 }
+
+const useStyles = makeStyles((theme) => ({
+    noWords: {
+        textAlign: 'center',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+    },
+}));

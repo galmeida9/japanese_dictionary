@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
       },
       padding: "16pt",
-      paddingTop: "10pt"
+      paddingTop: "10pt",
+      userSelect: 'none'
     },
     kanji: {
         fontSize: '64pt'

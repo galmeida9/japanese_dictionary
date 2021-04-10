@@ -30,7 +30,8 @@ const useStyles = makeStyles({
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, -50%)',
-        padding: '10pt'
+        padding: '10pt',
+        userSelect: 'none'
     },
     loading: {
         position: 'absolute',

@@ -47,6 +47,20 @@ Stores all your added words, giving you the ability to search them, consult them
 <img src="./demo/wordbank.gif" width=800>
 </p>
 
+### Flash Cards
+
+Words from your word bank are randomly selected and you need to indicate if you know the word or not, the card can be flipped to show the reading of the word and its meaning. If you do not know a word, it gets asked again in the future until you know it. It is a fast and effective you of memorizing and remembering all your learned words.
+
+The flash cards also have shortcuts to speed up your learning:
+
+* **Right Arrow** indicates that you know the word
+* **Left Arrow** indicates that you do not know the word
+* **Space** Flips the card
+
+<p align="center">
+<img src="./demo/flashcards.gif" width=800>
+</p>
+
 ### Practice
 
 Words from the word bank are randomly chosen and if they are in kanji you have to write them, otherwise you have to type their meaning in english.
@@ -81,5 +95,4 @@ You can save all your data by exporting it to a location of your preference and 
 
 ## Incoming Features
 
-* Flash Cards
 * Study Material (hiragana and katakana charts and other materials)

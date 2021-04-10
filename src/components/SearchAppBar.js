@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 import clsx from 'clsx';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -23,186 +23,187 @@ import WordBankContext from './WordBankContext';
 import CollectionsIcon from '@material-ui/icons/Collections';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+    root: {
+        flexGrow: 1,
     },
-  },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+    menuButton: {
+        marginRight: theme.spacing(2),
     },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
+    title: {
+        flexGrow: 1,
+        display: 'none',
+        [theme.breakpoints.up('sm')]: {
+            display: 'block',
+        },
+        userSelect: 'none'
     },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '17ch',
-      '&:focus': {
-        width: '22ch',
-      },
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(1),
+            width: 'auto',
+        },
     },
-  },
+    searchIcon: {
+        padding: theme.spacing(0, 2),
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+    },
+    inputInput: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '17ch',
+            '&:focus': {
+                width: '22ch',
+            },
+        },
+    },
 }));
 
 export default function SearchAppBar(props) {
-  const [state, setState] = React.useState({left: false,});
-  const [currScreen, setCurrScreen] = React.useState("Japanese Dictionary");
+    const [state, setState] = React.useState({ left: false, });
+    const [currScreen, setCurrScreen] = React.useState("Japanese Dictionary");
 
-  const classes = useStyles();
-  const JishoApi = require('unofficial-jisho-api');
-  const jisho = new JishoApi();
-  const history = useHistory();
-  const context = useContext(WordBankContext);
-  
-  useEffect(() => {
-    history.push("/");
-    setCurrScreen("Japanese Dictionary")
-  }, [])
+    const classes = useStyles();
+    const JishoApi = require('unofficial-jisho-api');
+    const jisho = new JishoApi();
+    const history = useHistory();
+    const context = useContext(WordBankContext);
 
-  const performSearch = (event) => {
-    if (event.keyCode == 13) {
-      props.loading(true);
-      jisho.searchForPhrase(event.target.value.toLowerCase()).then((data) => {
-        if (event.target.value == "") {
-          data.meta.status = 400;
-        }
-        props.SearchData(JSON.stringify(data, null, 2));
-        props.loading(false);
+    useEffect(() => {
         history.push("/");
-      });
+        setCurrScreen("Japanese Dictionary")
+    }, [])
+
+    const performSearch = (event) => {
+        if (event.keyCode == 13) {
+            props.loading(true);
+            jisho.searchForPhrase(event.target.value.toLowerCase()).then((data) => {
+                if (event.target.value == "") {
+                    data.meta.status = 400;
+                }
+                props.SearchData(JSON.stringify(data, null, 2));
+                props.loading(false);
+                history.push("/");
+            });
+        }
     }
-  }
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
+    const toggleDrawer = (anchor, open) => (event) => {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
 
-    setState({ ...state, [anchor]: open });
-  };
+        setState({ ...state, [anchor]: open });
+    };
 
-  const list = (anchor) => (
-    <div
-      className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-      })}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List>
-        <ListItem button key={"Japanese Dictionary"} style={{marginTop: '2pt'}} onClick={() => {history.push("/");setCurrScreen("Japanese Dictionary")}}>
-          <ListItemIcon>
-              <LanguageIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Japanese Dictionary"} />
-        </ListItem>
+    const list = (anchor) => (
+        <div
+            className={clsx(classes.list, {
+                [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+            })}
+            role="presentation"
+            onClick={toggleDrawer(anchor, false)}
+            onKeyDown={toggleDrawer(anchor, false)}
+        >
+            <List>
+                <ListItem button key={"Japanese Dictionary"} style={{ marginTop: '2pt' }} onClick={() => { history.push("/"); setCurrScreen("Japanese Dictionary") }}>
+                    <ListItemIcon>
+                        <LanguageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Japanese Dictionary"} />
+                </ListItem>
 
-        <ListItem button key={"Word Bank"} onClick={() => {history.push("/wordBank");setCurrScreen("Word Bank")}}>
-          <ListItemIcon>
-              <StorageIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Word Bank"} />
-        </ListItem>
+                <ListItem button key={"Word Bank"} onClick={() => { history.push("/wordBank"); setCurrScreen("Word Bank") }}>
+                    <ListItemIcon>
+                        <StorageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Word Bank"} />
+                </ListItem>
 
-        <ListItem button key={"Flash Cards"} onClick={() => {history.push("/flashcards");setCurrScreen("Flash Cards")}}>
-          <ListItemIcon>
-              <CollectionsIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Flash Cards"} />
-        </ListItem>
+                <ListItem button key={"Flash Cards"} onClick={() => { history.push("/flashcards"); setCurrScreen("Flash Cards") }}>
+                    <ListItemIcon>
+                        <CollectionsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Flash Cards"} />
+                </ListItem>
 
-        <ListItem button key={"Practice"} onClick={() => {history.push("/practice");setCurrScreen("Practice")}}>
-          <ListItemIcon>
-              <ImportContactsRoundedIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Practice"} />
-        </ListItem>
+                <ListItem button key={"Practice"} onClick={() => { history.push("/practice"); setCurrScreen("Practice") }}>
+                    <ListItemIcon>
+                        <ImportContactsRoundedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Practice"} />
+                </ListItem>
 
-      </List>
-      <Divider />
-      <List>
-        <ListItem button key={"Settings"} onClick={() => {history.push("/settings");setCurrScreen("Settings")}}>
-          <ListItemIcon>
-              <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Settings"} />
-        </ListItem>
-      </List>
-    </div>
-  );
+            </List>
+            <Divider />
+            <List>
+                <ListItem button key={"Settings"} onClick={() => { history.push("/settings"); setCurrScreen("Settings") }}>
+                    <ListItemIcon>
+                        <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Settings"} />
+                </ListItem>
+            </List>
+        </div>
+    );
 
-  return (
-    <div className={classes.root}>
-        <AppBar position="fixed" color={context.state.dark ? "default" : "primary"}>
-            <Toolbar>
-                <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={toggleDrawer('left', true)}
-                    edge="start"
-                >
-                    <MenuIcon />
-                </IconButton>
-                <Typography className={classes.title} variant="h6" noWrap>
-                    {currScreen}
-                </Typography>
-                <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                    <SearchIcon />
+    return (
+        <div className={classes.root}>
+            <AppBar position="fixed" color={context.state.dark ? "default" : "primary"}>
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={toggleDrawer('left', true)}
+                        edge="start"
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography className={classes.title} variant="h6" noWrap>
+                        {currScreen}
+                    </Typography>
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon />
+                        </div>
+                        <InputBase
+                            placeholder="Search in dictionary"
+                            classes={{
+                                root: classes.inputRoot,
+                                input: classes.inputInput,
+                            }}
+                            inputProps={{ 'aria-label': 'search' }}
+                            onKeyDown={performSearch}
+                        />
                     </div>
-                    <InputBase
-                      placeholder="Search in dictionary"
-                      classes={{
-                          root: classes.inputRoot,
-                          input: classes.inputInput,
-                      }}
-                      inputProps={{ 'aria-label': 'search' }}
-                      onKeyDown={performSearch}
-                    />
-                </div>
-            </Toolbar>
-        </AppBar>
-        <SwipeableDrawer
-            anchor={'left'}
-            open={state['left']}
-            onClose={toggleDrawer('left', false)}
-            onOpen={toggleDrawer('left', true)}
-          >
-            {list('left')}
-        </SwipeableDrawer>
-    </div>
-  );
+                </Toolbar>
+            </AppBar>
+            <SwipeableDrawer
+                anchor={'left'}
+                open={state['left']}
+                onClose={toggleDrawer('left', false)}
+                onOpen={toggleDrawer('left', true)}
+            >
+                {list('left')}
+            </SwipeableDrawer>
+        </div>
+    );
 }

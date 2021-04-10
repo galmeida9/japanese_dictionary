@@ -33,15 +33,24 @@ const useStyles = makeStyles({
     highScore: {
         width: '162pt',
         textAlign: 'center',
-        margin: '10pt'
+        margin: '10pt',
+        userSelect: 'none'
     },
     score: {
         width: '162pt',
         textAlign: 'center',
         margin: '10pt',
         right: '0',
-        position: 'absolute'
-    }
+        position: 'absolute',
+        userSelect: 'none'
+    },
+    noWords: {
+        textAlign: 'center',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+    },
 });
 
 function Alert(props) {
@@ -50,7 +59,7 @@ function Alert(props) {
 
 
 export default function Practice(props) {
-    const [currWord, setCurrWord] = useState({"kanji": "", "hira": "", "english": ""});
+    const [currWord, setCurrWord] = useState({ "kanji": "", "hira": "", "english": "" });
     const [open, setOpen] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [correctResp, setCorrectResp] = React.useState("");
@@ -90,7 +99,7 @@ export default function Practice(props) {
     const getRandomWord = (list) => {
         let index = Math.floor(Math.random() * list.length);
         setCurrWord(list[index]);
-        
+
         if (list.length > 2) {
             list.splice(index, 1);
             setWordList(list);
@@ -108,8 +117,8 @@ export default function Practice(props) {
     const checkInput = (event) => {
         if (event.keyCode == 13) {
             if (response != "") {
-                if ((currWord.kanji != currWord.hira && response == currWord.kanji) 
-                || (currWord.kanji == currWord.hira && response == currWord.english.split(" ")[0])) {
+                if ((currWord.kanji != currWord.hira && response == currWord.kanji)
+                    || (currWord.kanji == currWord.hira && response == currWord.english.split(" ")[0])) {
                     let s = score + 1
                     setScore(s);
                     setOpen(true);
@@ -128,7 +137,7 @@ export default function Practice(props) {
                         setCorrectResp(currWord.hira);
                     }
                 }
-    
+
                 if (wordList.length > 0) {
                     getRandomWord(wordList);
                 }
@@ -145,20 +154,20 @@ export default function Practice(props) {
         setScore(0);
         setFinished(false);
     }
-    
+
     return (
         <div>
-            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success">
                     Correct!
                 </Alert>
             </Snackbar>
-            <Snackbar open={error} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+            <Snackbar open={error} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="error">
                     Incorrect, correct response: {correctResp}
                 </Alert>
             </Snackbar>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
                 <Card className={classes.highScore}>
                     <CardContent>
                         <Typography variant="h5" component="h2">
@@ -180,26 +189,30 @@ export default function Practice(props) {
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
                             {currWord.kanji != currWord.hira ? ("Write the kanji bellow") : ("Write the meaning in english bellow")}
                         </Typography>
-                        { currWord.kanji != currWord.hira ? (
+                        {currWord.kanji != currWord.hira ? (
                             <Typography variant="h1" component="h2">
                                 {currWord.kanji}
                             </Typography>
                         ) : (
-                            <Typography variant="h2" component="h2">
-                                {currWord.kanji}
-                            </Typography>
-                        ) }
+                                <Typography variant="h2" component="h2">
+                                    {currWord.kanji}
+                                </Typography>
+                            )}
                     </CardContent>
-                    <TextField 
-                        id="outlined-basic" 
-                        label="Write answer" 
-                        variant="outlined" 
-                        onKeyDown={checkInput} 
-                        value={response} 
-                        onChange={(e) => {setResponse(e.target.value)}}
+                    <TextField
+                        id="outlined-basic"
+                        label="Write answer"
+                        variant="outlined"
+                        onKeyDown={checkInput}
+                        value={response}
+                        onChange={(e) => { setResponse(e.target.value) }}
                     />
-                </Card>                
-            ) : (<span/>)}
+                </Card>
+            ) : (
+                    <div>
+                        <h1 className={classes.noWords} style={{ width: '100%' }}>Add words to your word bank to start practicing</h1>
+                    </div>
+                )}
             { finished ? (
                 <Card className={classes.card}>
                     <CardContent>
@@ -208,16 +221,16 @@ export default function Practice(props) {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
-                            style={{marginLeft: 'auto', marginRight: 'auto'}} 
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginLeft: 'auto', marginRight: 'auto' }}
                             onClick={retry}>
                             Retry
                         </Button>
                     </CardActions>
-                </Card>     
-            ) : (<span/>) }
+                </Card>
+            ) : (<span />)}
         </div>
     )
 }

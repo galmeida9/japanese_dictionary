@@ -145,6 +145,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
+        userSelect: 'none'
     },
     paper: {
         width: '100%',
@@ -288,13 +289,14 @@ export default function WordBank() {
 
     const searchEvent = (event) => {
         if (event.keyCode == 13) {
+            console.log("test")
             let query = event.target.value;
             searchWord(query);
+            if (filterChip) filter(jlpt, false, query);
         }
     }
 
     const searchWord = (query) => {
-        console.log(query)
         setSearch(query);
         let newList = [];
         context.state.japanese.forEach((word) => {
@@ -312,12 +314,12 @@ export default function WordBank() {
         if (filterChip) filter(jlpt, true);
     }
 
-    const filter = (level, clear = false) => {
-        let newList = [];
+    const filter = (level, clear = false, input = search) => {
+        let newList = []
         let listToSearch = context.state.japanese;
 
         if (!clear) {
-            listToSearch = searchWord(search);
+            listToSearch = searchWord(input);
         }
 
         listToSearch.forEach((word) => {
@@ -375,7 +377,7 @@ export default function WordBank() {
                 ) : (
                         <div style={{ display: "flex" }}>
                             {search != "" ? (<Chip label={search} onDelete={clearSearch} color="primary" style={{ marginRight: '12pt', marginTop: '12pt' }} />) : null}
-                            {filterChip != "" ? (<Chip label={jlpt} onDelete={clearFilter} color="primary" style={{ marginRight: '12pt', marginTop: '12pt' }} />) : null}
+                            {filterChip != "" ? (<Chip label={jlpt} onDelete={clearFilter} color="secondary" style={{ marginRight: '12pt', marginTop: '12pt' }} />) : null}
                             <TextField id="standard-basic" label="Search Word Bank" onKeyDown={searchEvent} style={{ marginRight: '10pt', width: '140pt' }} />
                             <IconButton style={{ marginTop: '8pt' }} onClick={openFilter} aria-controls="simple-menu" aria-haspopup="true">
                                 <FilterListIcon />
