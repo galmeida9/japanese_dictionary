@@ -11,6 +11,7 @@ I am currently learning japanese on my own, and I wanted to print out some flash
 * [Features](#features)
     * [Dictionary](#dictionary)
     * [Word Bank](#word-bank)
+    * [Flash Cards](#flash-cards)
     * [Practice](#practice)
     * [Duolingo Login](#duolingo-login)
     * [Dark Mode](#dark-mode)
